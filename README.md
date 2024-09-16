@@ -91,6 +91,7 @@
         var dotVisible = false;
         var dotAppearanceTime;
         var gameStarted = false;
+        var waitingForDot = false; // New variable to check if waiting for dot appearance
         var bestTime = null;
 
         // Function to draw the dot
@@ -131,6 +132,8 @@
 
         // Function to handle delay for dot appearance
         function startGameDelay() {
+            waitingForDot = true; // Set to true when waiting for dot appearance
+
             // Random delay between 2 and 8 seconds (2000 to 8000 milliseconds)
             var delay = Math.random() * 6000 + 2000;
 
@@ -140,6 +143,7 @@
                 dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
 
                 dotVisible = true;
+                waitingForDot = false; // No longer waiting for dot after it appears
                 dotAppearanceTime = performance.now();
             }, delay);
         }
@@ -147,6 +151,15 @@
         // Handle click and touch events
         function handleInteraction(e) {
             if (!gameStarted) return; // Ignore interactions before the game starts
+
+            if (waitingForDot) {
+                // If user taps before dot appears, end the game
+                messageDiv.textContent = 'Patience is Required';
+                gameStarted = false;
+                startButton.style.display = 'block'; // Show the start button again
+                waitingForDot = false; // Reset waiting state
+                return;
+            }
 
             if (dotVisible) {
                 // Calculate distance between interaction and dot center
