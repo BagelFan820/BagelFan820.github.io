@@ -13,7 +13,7 @@
             position: relative;
             width: 100%;
             max-width: 500px;
-            height: 60vh;
+            height: 60vh; /* Adjusted height to 60% of the viewport */
             margin: 0 auto;
             background-color: #ffffff;
             overflow: hidden;
@@ -36,9 +36,10 @@
         }
         #bestTime {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2;
+            top: calc(50vh - 20px); /* Position above the game container's top border */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
             font-size: 1em;
             color: #333;
         }
@@ -64,10 +65,10 @@
 </head>
 <body>
     <div id="title">Click the Dot FAST</div>
+    <div id="bestTime"></div> <!-- Moved outside the gameContainer -->
     <div id="gameContainer">
         <button id="startButton">Start</button>
         <div id="message"></div>
-        <div id="bestTime"></div>
         <canvas id="gameCanvas"></canvas>
     </div>
 
