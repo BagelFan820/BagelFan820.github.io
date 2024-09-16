@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Click the Dot FAST!</title>
@@ -66,7 +67,7 @@
         /* Message display styling */
         #message {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3;
@@ -431,54 +432,4 @@
                         playerName = sanitizeInput(playerName.trim());
                     }
 
-                    // Save the score to Firestore
-                    saveScore(playerName, reactionTimeSec);
-
-                    // Show the reaction time message
-                    resetGame('Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds');
-
-                    // Update best time if necessary
-                    if (bestTime === null || reactionTimeSec < bestTime) {
-                        bestTime = reactionTimeSec;
-                        bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
-                        bestTimeDiv.style.display = 'block'; // Ensure it is visible
-
-                        // Save best time to localStorage
-                        localStorage.setItem('bestTime', bestTime.toFixed(3));
-                    }
-
-                    // Refresh the leaderboard
-                    getTopScores();
-                }
-            }
-        }
-
-        // Function to sanitize player input
-        function sanitizeInput(input) {
-            const div = document.createElement('div');
-            div.textContent = input;
-            return div.innerHTML;
-        }
-
-        // Event listeners for clicks and touches
-        document.addEventListener('click', handleInteraction);
-        document.addEventListener('touchstart', handleInteraction);
-
-        // Start button event listener
-        startButton.addEventListener('click', () => {
-            // Reset messages and hide start button
-            messageDiv.textContent = '';
-            messageDiv.style.display = 'none';
-            startButton.style.display = 'none';
-            gameState = 'countdown';
-
-            startCountdown(); // Begin countdown before game starts
-        });
-
-        // Fetch and display the leaderboard on page load
-        window.onload = function() {
-            getTopScores();
-        };
-    </script>
-</body>
-</html>
+                    
