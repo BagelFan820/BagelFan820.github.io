@@ -37,11 +37,10 @@
         }
         #bestTime {
             position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 10px;
+            left: 10px;
             z-index: 2;
-            font-size: 1.2em;
+            font-size: 1em;
             color: #333;
         }
         #message {
@@ -50,9 +49,11 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            font-size: 2em;
+            font-size: 1.5em;
             color: #ff6600;
             text-align: center;
+            padding: 0 10px;
+            word-wrap: break-word;
         }
         #gameCanvas {
             position: absolute;
@@ -129,7 +130,7 @@
                     // User clicked on the dot
                     var reactionTimeMs = performance.now() - dotAppearanceTime;
                     var reactionTimeSec = reactionTimeMs / 1000;
-                    messageDiv.textContent = 'Reaction Time:\n' + reactionTimeSec.toFixed(3) + ' seconds';
+                    messageDiv.textContent = 'Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds';
 
                     // Update best time
                     if (bestTime === null || reactionTimeSec < bestTime) {
@@ -153,7 +154,7 @@
         startButton.addEventListener('click', function() {
             messageDiv.textContent = '';
             startButton.style.display = 'none';
-            bestTimeDiv.textContent = ''; // Hide best time during the attempt
+            bestTimeDiv.style.display = 'none'; // Hide best time during the attempt
             gameStarted = true;
 
             // Random delay between 2 and 10 seconds (2000 to 10000 milliseconds)
@@ -175,8 +176,14 @@
             canvas.height = gameContainer.clientHeight;
         });
 
+        // Show best time if available when the page loads
+        if (bestTime !== null) {
+            bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+        }
+
         // Start the drawing loop
         draw();
     </script>
 </body>
 </html>
+
