@@ -109,6 +109,41 @@
             requestAnimationFrame(draw);
         }
 
+        // Function to handle countdown
+        function startCountdown() {
+            var countdownNumbers = ['3', '2', '1'];
+            var currentCount = 0;
+            
+            // Function to display each countdown number
+            function showCountdown() {
+                if (currentCount < countdownNumbers.length) {
+                    messageDiv.textContent = countdownNumbers[currentCount];
+                    currentCount++;
+                    setTimeout(showCountdown, 500); // Show each number for 0.5 seconds
+                } else {
+                    messageDiv.textContent = ''; // Clear message after countdown
+                    startGameDelay(); // Start the delay for dot appearance
+                }
+            }
+
+            showCountdown(); // Start the countdown
+        }
+
+        // Function to handle delay for dot appearance
+        function startGameDelay() {
+            // Random delay between 2 and 8 seconds (2000 to 8000 milliseconds)
+            var delay = Math.random() * 6000 + 2000;
+
+            setTimeout(function() {
+                // Show the dot at a random position within the canvas
+                dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
+                dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
+
+                dotVisible = true;
+                dotAppearanceTime = performance.now();
+            }, delay);
+        }
+
         // Handle click and touch events
         function handleInteraction(e) {
             if (!gameStarted) return; // Ignore interactions before the game starts
@@ -157,17 +192,7 @@
             startButton.style.display = 'none';
             gameStarted = true;
 
-            // Random delay between 2 and 10 seconds (2000 to 10000 milliseconds)
-            var delay = Math.random() * 8000 + 2000;
-
-            setTimeout(function() {
-                // Show the dot at a random position within the canvas
-                dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
-                dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
-
-                dotVisible = true;
-                dotAppearanceTime = performance.now();
-            }, delay);
+            startCountdown(); // Begin countdown before game starts
         });
 
         // Adjust canvas size when the window is resized
