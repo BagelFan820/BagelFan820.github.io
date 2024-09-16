@@ -1,8 +1,9 @@
 <html>
 <head>
-    <title>Click the Dot FAST</title>
+    <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Reset and basic styling */
         body {
             margin: 0;
             overflow: hidden;
@@ -11,11 +12,13 @@
             position: relative;
             height: 100vh;
         }
+
+        /* Game container styling */
         #gameContainer {
             position: relative;
             width: 100%;
             max-width: 500px;
-            height: 60vh; /* Adjusted height to 60% of the viewport */
+            height: 60vh; /* 60% of the viewport height */
             margin: 0 auto;
             background-color: #ffffff;
             overflow: hidden;
@@ -24,15 +27,19 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Title styling */
         #title {
             text-align: center;
             font-size: 2em;
             margin: 20px 0;
             color: #ff6600;
         }
+
+        /* Start button styling */
         #startButton {
             position: absolute;
-            z-index: 2;
+            z-index: 4; /* Higher z-index to be above the message */
             padding: 15px 30px;
             font-size: 1.5em;
             cursor: pointer;
@@ -45,34 +52,41 @@
         #startButton:hover {
             background-color: #e55b00;
         }
+
+        /* Best time display styling */
         #bestTime {
             position: absolute;
-            top: 116px; /* Position it between the title and game container */
+            top: 116px; /* Between the title and game container */
             left: 15px; /* Align to the left */
             z-index: 3;
             font-size: 1em;
             color: #333;
         }
+
+        /* Message display styling */
         #message {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3;
             font-size: 1.5em;
             color: #ff6600;
             text-align: center;
-            padding: 0 20px;
+            padding: 10px 20px;
             word-wrap: break-word;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             display: none; /* Hidden by default */
+            pointer-events: none; /* Allow clicks to pass through */
         }
+
+        /* Canvas styling */
         #gameCanvas {
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 1;
+            z-index: 2;
             cursor: pointer;
         }
     </style>
@@ -102,14 +116,18 @@
         }
         setCanvasSize();
 
+        // Handle window resizing
+        window.addEventListener('resize', setCanvasSize);
+
         // Game variables
-        const dotRadius = 40; // Increased size of the dot
+        const dotRadius = 40; // Size of the dot
         let dotX, dotY;
         let dotVisible = false;
         let dotAppearanceTime = 0;
-        let gameState = 'idle'; // Possible states: 'idle', 'countdown', 'waiting', 'dotVisible'
+        let gameState = 'idle'; // 'idle', 'countdown', 'waiting', 'dotVisible', 'exploding'
         let bestTime = null;
         let dotTimeout; // Timeout for dot appearance
+        let particles = []; // Array to hold explosion particles
 
         // Initialize bestTime from localStorage if available
         if (localStorage.getItem('bestTime')) {
@@ -117,12 +135,12 @@
             bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
         }
 
-        // Function to draw the dot
+        // Function to draw the dot and explosion
         function draw() {
             // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // If the dot is visible, draw it
+            // Draw the dot if visible
             if (dotVisible) {
                 ctx.fillStyle = 'black';
                 ctx.beginPath();
@@ -130,8 +148,34 @@
                 ctx.fill();
             }
 
+            // Draw explosion particles if any
+            if (particles.length > 0) {
+                particles.forEach((particle, index) => {
+                    ctx.fillStyle = particle.color;
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Update particle position
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    // Fade out the particle
+                    particle.alpha -= particle.fade;
+                    particle.size *= 0.96; // Reduce size over time
+
+                    // Remove particle if alpha or size is too low
+                    if (particle.alpha <= 0 || particle.size <= 0.5) {
+                        particles.splice(index, 1);
+                    }
+                });
+            }
+
             requestAnimationFrame(draw);
         }
+
+        // Start the drawing loop
+        draw();
 
         // Function to handle countdown
         function startCountdown() {
@@ -140,8 +184,10 @@
 
             gameState = 'countdown';
             messageDiv.style.display = 'block';
-            messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
             messageDiv.style.color = '#ff6600';
+            messageDiv.textContent = countdownNumbers[currentCount];
+            currentCount++;
 
             // Function to display each countdown number
             function showCountdown() {
@@ -156,7 +202,7 @@
                 }
             }
 
-            showCountdown(); // Start the countdown
+            setTimeout(showCountdown, 500); // Start countdown after first display
         }
 
         // Function to handle delay for dot appearance
@@ -185,7 +231,7 @@
 
             if (message) {
                 messageDiv.style.display = 'block';
-                messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
                 messageDiv.style.color = '#ff6600';
             } else {
                 messageDiv.style.display = 'none';
@@ -195,6 +241,32 @@
             if (dotTimeout) {
                 clearTimeout(dotTimeout); // Clear the timeout to stop the dot from appearing
                 dotTimeout = null;
+            }
+        }
+
+        // Function to create explosion particles
+        function createExplosion(x, y) {
+            const particleCount = 30; // Number of particles
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 4 + 2;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                const size = Math.random() * 3 + 2;
+                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const alpha = 1;
+                const fade = 0.02;
+
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: vx,
+                    vy: vy,
+                    size: size,
+                    color: color,
+                    alpha: alpha,
+                    fade: fade
+                });
             }
         }
 
@@ -237,6 +309,9 @@
                     const reactionTimeMs = performance.now() - dotAppearanceTime;
                     const reactionTimeSec = reactionTimeMs / 1000;
 
+                    // Create explosion animation
+                    createExplosion(dotX, dotY);
+
                     // Show the reaction time message
                     resetGame('Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds');
 
@@ -267,12 +342,6 @@
 
             startCountdown(); // Begin countdown before game starts
         });
-
-        // Adjust canvas size when the window is resized
-        window.addEventListener('resize', setCanvasSize);
-
-        // Start the drawing loop
-        draw();
     </script>
 </body>
 </html>
