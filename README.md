@@ -85,7 +85,7 @@
         canvas.height = gameContainer.clientHeight;
 
         // Game variables
-        var dotRadius = 20; // Size of the dot
+        var dotRadius = 25; // Increase size of the dot
         var dotX, dotY;
         var dotVisible = false;
         var dotAppearanceTime;
@@ -142,6 +142,7 @@
 
                     // Display best time
                     bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+                    bestTimeDiv.style.display = 'block'; // Ensure it is visible
                 }
             }
         }
@@ -153,7 +154,6 @@
         startButton.addEventListener('click', function() {
             messageDiv.textContent = '';
             startButton.style.display = 'none';
-            bestTimeDiv.style.display = 'none'; // Hide best time during the attempt
             gameStarted = true;
 
             // Random delay between 2 and 10 seconds (2000 to 10000 milliseconds)
@@ -178,6 +178,7 @@
         // Show best time if available when the page loads
         if (bestTime !== null) {
             bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+            bestTimeDiv.style.display = 'block'; // Ensure it is visible
         }
 
         // Start the drawing loop
@@ -185,4 +186,3 @@
     </script>
 </body>
 </html>
-
