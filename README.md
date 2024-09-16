@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST!!</title>
+    <title>Click the Dot FAST</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             position: relative;
+            height: 100vh;
         }
         #gameContainer {
             position: relative;
@@ -19,6 +20,9 @@
             background-color: #ffffff;
             overflow: hidden;
             border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #title {
             text-align: center;
@@ -28,13 +32,18 @@
         }
         #startButton {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             z-index: 2;
             padding: 15px 30px;
             font-size: 1.5em;
             cursor: pointer;
+            background-color: #ff6600;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        #startButton:hover {
+            background-color: #e55b00;
         }
         #bestTime {
             position: absolute;
@@ -46,26 +55,30 @@
         }
         #message {
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 2;
+            z-index: 3;
             font-size: 1.5em;
             color: #ff6600;
             text-align: center;
-            padding: 0 10px;
+            padding: 0 20px;
             word-wrap: break-word;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            display: none; /* Hidden by default */
         }
         #gameCanvas {
             position: absolute;
             top: 0;
             left: 0;
             z-index: 1;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="title">Click the Dot FAST!! V1</div>
+    <div id="title">Click the Dot FAST!</div>
     <div id="bestTime">BEST TIME: N/A</div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
@@ -126,6 +139,9 @@
             let currentCount = 0;
 
             gameState = 'countdown';
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            messageDiv.style.color = '#ff6600';
 
             // Function to display each countdown number
             function showCountdown() {
@@ -135,6 +151,7 @@
                     setTimeout(showCountdown, 500); // Show each number for 0.5 seconds
                 } else {
                     messageDiv.textContent = ''; // Clear message after countdown
+                    messageDiv.style.display = 'none';
                     startGameDelay(); // Start the delay for dot appearance
                 }
             }
@@ -165,6 +182,15 @@
             gameState = 'idle';
             dotVisible = false;
             messageDiv.textContent = message;
+
+            if (message) {
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                messageDiv.style.color = '#ff6600';
+            } else {
+                messageDiv.style.display = 'none';
+            }
+
             startButton.style.display = 'block';
             if (dotTimeout) {
                 clearTimeout(dotTimeout); // Clear the timeout to stop the dot from appearing
@@ -210,9 +236,9 @@
                     // User clicked on the dot
                     const reactionTimeMs = performance.now() - dotAppearanceTime;
                     const reactionTimeSec = reactionTimeMs / 1000;
-                    
-                    // Always show the reaction time message
-                    messageDiv.textContent = 'Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds';
+
+                    // Show the reaction time message
+                    resetGame('Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds');
 
                     // Update best time if necessary
                     if (bestTime === null || reactionTimeSec < bestTime) {
@@ -223,11 +249,6 @@
                         // Save best time to localStorage
                         localStorage.setItem('bestTime', bestTime.toFixed(3));
                     }
-
-                    // Reset game after showing the reaction time
-                    setTimeout(() => {
-                        resetGame();
-                    }, 1000); // Add a small delay before resetting to allow the user to see the message
                 }
             }
         }
@@ -240,6 +261,7 @@
         startButton.addEventListener('click', () => {
             // Reset messages and hide start button
             messageDiv.textContent = '';
+            messageDiv.style.display = 'none';
             startButton.style.display = 'none';
             gameState = 'countdown';
 
