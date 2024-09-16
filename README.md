@@ -210,9 +210,11 @@
                     // User clicked on the dot
                     const reactionTimeMs = performance.now() - dotAppearanceTime;
                     const reactionTimeSec = reactionTimeMs / 1000;
+                    
+                    // Always show the reaction time message
                     messageDiv.textContent = 'Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds';
 
-                    // Update best time
+                    // Update best time if necessary
                     if (bestTime === null || reactionTimeSec < bestTime) {
                         bestTime = reactionTimeSec;
                         bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
