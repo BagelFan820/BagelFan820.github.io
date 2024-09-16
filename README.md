@@ -152,12 +152,13 @@
         function handleInteraction(e) {
             if (!gameStarted) return; // Ignore interactions before the game starts
 
-            if (waitingForDot) {
+            if (waitingForDot && !dotVisible) {
                 // If user taps before dot appears, end the game
                 messageDiv.textContent = 'Patience is Required';
                 gameStarted = false;
                 startButton.style.display = 'block'; // Show the start button again
                 waitingForDot = false; // Reset waiting state
+                dotVisible = false; // Ensure the dot is hidden
                 return;
             }
 
