@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST!!</title>
+    <title>Click the Dot FAST V1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -65,7 +65,7 @@
     </style>
 </head>
 <body>
-    <div id="title">Click the Dot FAST</div>
+    <div id="title">Click the Dot FAST!! V1</div>
     <div id="bestTime">BEST TIME: N/A</div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
@@ -182,7 +182,7 @@
             if (gameState === 'idle') return; // Ignore interactions before the game starts
 
             if (gameState === 'countdown') {
-                // Optionally, prevent interactions during countdown
+                // Ignore interactions during countdown
                 return;
             }
 
@@ -224,8 +224,10 @@
                         localStorage.setItem('bestTime', bestTime.toFixed(3));
                     }
 
-                    // Reset game
-                    resetGame();
+                    // Reset game after showing the reaction time
+                    setTimeout(() => {
+                        resetGame();
+                    }, 1000); // Add a small delay before resetting to allow the user to see the message
                 }
             }
         }
