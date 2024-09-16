@@ -7,7 +7,6 @@
         body {
             margin: 0;
             overflow: hidden;
-            cursor: none; /* Hide the default cursor */
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
         }
@@ -91,11 +90,9 @@
         var dotVisible = false;
         var dotAppearanceTime;
         var gameStarted = false;
-        var crosshairSize = 20;
         var bestTime = null;
-        var showCrosshair = false;
 
-        // Function to draw the crosshair and dot
+        // Function to draw the dot
         function draw() {
             // Clear the canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -108,45 +105,8 @@
                 ctx.fill();
             }
 
-            // Draw the crosshair if it's enabled
-            if (showCrosshair) {
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(crosshairX - crosshairSize, crosshairY);
-                ctx.lineTo(crosshairX + crosshairSize, crosshairY);
-                ctx.moveTo(crosshairX, crosshairY - crosshairSize);
-                ctx.lineTo(crosshairX, crosshairY + crosshairSize);
-                ctx.stroke();
-            }
-
             requestAnimationFrame(draw);
         }
-
-        var crosshairX = canvas.width / 2;
-        var crosshairY = canvas.height / 2;
-
-        // Update the crosshair position
-        function updateCrosshairPosition(e) {
-            var rect = canvas.getBoundingClientRect();
-            if (e.touches && e.touches.length > 0) {
-                crosshairX = e.touches[0].clientX - rect.left;
-                crosshairY = e.touches[0].clientY - rect.top;
-            } else {
-                crosshairX = e.clientX - rect.left;
-                crosshairY = e.clientY - rect.top;
-            }
-        }
-
-        // Handle mouse and touch movements
-        document.addEventListener('mousemove', function(e) {
-            updateCrosshairPosition(e);
-        });
-
-        document.addEventListener('touchmove', function(e) {
-            updateCrosshairPosition(e);
-            e.preventDefault();
-        }, { passive: false });
 
         // Handle click and touch events
         function handleInteraction(e) {
@@ -178,7 +138,6 @@
 
                     dotVisible = false;
                     gameStarted = false;
-                    showCrosshair = false;
                     startButton.style.display = 'block';
 
                     // Display best time
@@ -196,7 +155,6 @@
             startButton.style.display = 'none';
             bestTimeDiv.textContent = ''; // Hide best time during the attempt
             gameStarted = true;
-            showCrosshair = false; // Hide crosshair until the dot appears
 
             // Random delay between 2 and 10 seconds (2000 to 10000 milliseconds)
             var delay = Math.random() * 8000 + 2000;
@@ -208,7 +166,6 @@
 
                 dotVisible = true;
                 dotAppearanceTime = performance.now();
-                showCrosshair = true; // Show crosshair when the dot appears
             }, delay);
         });
 
@@ -216,8 +173,6 @@
         window.addEventListener('resize', function() {
             canvas.width = gameContainer.clientWidth;
             canvas.height = gameContainer.clientHeight;
-            crosshairX = canvas.width / 2;
-            crosshairY = canvas.height / 2;
         });
 
         // Start the drawing loop
