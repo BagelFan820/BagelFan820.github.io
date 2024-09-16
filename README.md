@@ -1,67 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reaction Time Game</title>
+    <title>Click the Dot FAST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             margin: 0;
             overflow: hidden;
             cursor: none; /* Hide the default cursor */
-        }
-        #gameCanvas {
+            font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+        }
+        #gameContainer {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            margin: 0 auto;
+            background-color: #ffffff;
+            overflow: hidden;
+            border: 2px solid #000;
+        }
+        #title {
+            text-align: center;
+            font-size: 2em;
+            margin: 20px 0;
+            color: #ff6600;
         }
         #startButton {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1;
+            z-index: 2;
             padding: 15px 30px;
-            font-size: 24px;
+            font-size: 1.5em;
+        }
+        #bestTime {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            font-size: 1.2em;
+            color: #333;
         }
         #message {
             position: absolute;
-            top: 30%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1;
-            font-size: 48px;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            z-index: 2;
+            font-size: 2em;
             color: #ff6600;
-            text-shadow: 2px 2px #000000;
             text-align: center;
         }
-        #topTimes {
+        #gameCanvas {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0;
+            left: 0;
             z-index: 1;
-            font-size: 20px;
-            font-family: Arial, sans-serif;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <button id="startButton">Start</button>
-    <div id="message"></div>
-    <div id="topTimes"></div>
-    <canvas id="gameCanvas"></canvas>
+    <div id="title">Click the Dot FAST</div>
+    <div id="gameContainer">
+        <button id="startButton">Start</button>
+        <div id="message"></div>
+        <div id="bestTime"></div>
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
     <script>
         // Get references to HTML elements
+        var gameContainer = document.getElementById('gameContainer');
         var canvas = document.getElementById('gameCanvas');
         var ctx = canvas.getContext('2d');
         var startButton = document.getElementById('startButton');
         var messageDiv = document.getElementById('message');
-        var topTimesDiv = document.getElementById('topTimes');
+        var bestTimeDiv = document.getElementById('bestTime');
 
-        // Set canvas size to full window
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Set canvas size to match gameContainer
+        canvas.width = gameContainer.clientWidth;
+        canvas.height = gameContainer.clientHeight;
 
         // Game variables
         var dotRadius = 20; // Size of the dot
@@ -70,7 +92,7 @@
         var dotAppearanceTime;
         var gameStarted = false;
         var crosshairSize = 20;
-        var reactionTimes = [];
+        var bestTime = null;
         var showCrosshair = false;
 
         // Function to draw the crosshair and dot
@@ -149,26 +171,18 @@
                     var reactionTimeSec = reactionTimeMs / 1000;
                     messageDiv.textContent = 'Reaction Time:\n' + reactionTimeSec.toFixed(3) + ' seconds';
 
-                    // Add the reaction time to the array
-                    reactionTimes.push(reactionTimeSec);
-
-                    // Sort the array and keep only top 5 times
-                    reactionTimes.sort(function(a, b) { return a - b; });
-                    if (reactionTimes.length > 5) {
-                        reactionTimes = reactionTimes.slice(0, 5);
+                    // Update best time
+                    if (bestTime === null || reactionTimeSec < bestTime) {
+                        bestTime = reactionTimeSec;
                     }
-
-                    // Update the topTimes div
-                    var topTimesHTML = '<strong>Top 5 Times:</strong><br>';
-                    for (var i = 0; i < reactionTimes.length; i++) {
-                        topTimesHTML += (i + 1) + '. ' + reactionTimes[i].toFixed(3) + ' seconds<br>';
-                    }
-                    topTimesDiv.innerHTML = topTimesHTML;
 
                     dotVisible = false;
                     gameStarted = false;
                     showCrosshair = false;
                     startButton.style.display = 'block';
+
+                    // Display best time
+                    bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
                 }
             }
         }
@@ -180,6 +194,7 @@
         startButton.addEventListener('click', function() {
             messageDiv.textContent = '';
             startButton.style.display = 'none';
+            bestTimeDiv.textContent = ''; // Hide best time during the attempt
             gameStarted = true;
             showCrosshair = false; // Hide crosshair until the dot appears
 
@@ -187,22 +202,9 @@
             var delay = Math.random() * 8000 + 2000;
 
             setTimeout(function() {
-                // Define the area to avoid (topTimesDiv area)
-                var avoidArea = {
-                    x: 0,
-                    y: 0,
-                    width: topTimesDiv.offsetWidth + 20, // Add some padding
-                    height: topTimesDiv.offsetHeight + 20
-                };
-
-                // Show the dot at a random position outside the avoidArea
-                do {
-                    dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
-                    dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
-                } while (
-                    dotX - dotRadius < avoidArea.x + avoidArea.width &&
-                    dotY - dotRadius < avoidArea.y + avoidArea.height
-                );
+                // Show the dot at a random position within the canvas
+                dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
+                dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
 
                 dotVisible = true;
                 dotAppearanceTime = performance.now();
@@ -212,8 +214,10 @@
 
         // Adjust canvas size when the window is resized
         window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = gameContainer.clientWidth;
+            canvas.height = gameContainer.clientHeight;
+            crosshairX = canvas.width / 2;
+            crosshairY = canvas.height / 2;
         });
 
         // Start the drawing loop
