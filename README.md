@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Click the Dot FAST</title>
@@ -34,6 +35,7 @@
             z-index: 2;
             padding: 15px 30px;
             font-size: 1.5em;
+            cursor: pointer;
         }
         #bestTime {
             position: absolute;
@@ -74,25 +76,27 @@
 
     <script>
         // Get references to HTML elements
-        var gameContainer = document.getElementById('gameContainer');
-        var canvas = document.getElementById('gameCanvas');
-        var ctx = canvas.getContext('2d');
-        var startButton = document.getElementById('startButton');
-        var messageDiv = document.getElementById('message');
-        var bestTimeDiv = document.getElementById('bestTime');
+        const gameContainer = document.getElementById('gameContainer');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+        const messageDiv = document.getElementById('message');
+        const bestTimeDiv = document.getElementById('bestTime');
 
         // Set canvas size to match gameContainer
-        canvas.width = gameContainer.clientWidth;
-        canvas.height = gameContainer.clientHeight;
+        function setCanvasSize() {
+            canvas.width = gameContainer.clientWidth;
+            canvas.height = gameContainer.clientHeight;
+        }
+        setCanvasSize();
 
         // Game variables
-        var dotRadius = 40; // Increase size of the dot
-        var dotX, dotY;
-        var dotVisible = false;
-        var dotAppearanceTime;
-        var gameStarted = false;
-        var waitingForDot = false; // Variable to check if waiting for dot appearance
-        var bestTime = null;
+        const dotRadius = 40; // Increased size of the dot
+        let dotX, dotY;
+        let dotVisible = false;
+        let dotAppearanceTime = 0;
+        let gameState = 'idle'; // Possible states: 'idle', 'countdown', 'waiting', 'dotVisible'
+        let bestTime = null;
 
         // Function to draw the dot
         function draw() {
@@ -112,9 +116,11 @@
 
         // Function to handle countdown
         function startCountdown() {
-            var countdownNumbers = ['3', '2', '1'];
-            var currentCount = 0;
-            
+            const countdownNumbers = ['3', '2', '1'];
+            let currentCount = 0;
+
+            gameState = 'countdown';
+
             // Function to display each countdown number
             function showCountdown() {
                 if (currentCount < countdownNumbers.length) {
@@ -132,40 +138,55 @@
 
         // Function to handle delay for dot appearance
         function startGameDelay() {
-            waitingForDot = true; // Set to true when waiting for dot appearance
+            gameState = 'waiting'; // Set to 'waiting' when waiting for dot appearance
 
             // Random delay between 2 and 8 seconds (2000 to 8000 milliseconds)
-            var delay = Math.random() * 6000 + 2000;
+            const delay = Math.random() * 6000 + 2000;
 
-            setTimeout(function() {
+            setTimeout(() => {
                 // Show the dot at a random position within the canvas
                 dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
                 dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
 
                 dotVisible = true;
-                waitingForDot = false; // No longer waiting for dot after it appears
+                gameState = 'dotVisible'; // Set state to 'dotVisible' after dot appears
                 dotAppearanceTime = performance.now();
             }, delay);
         }
 
+        // Function to reset the game to idle state
+        function resetGame(message = '') {
+            gameState = 'idle';
+            dotVisible = false;
+            messageDiv.textContent = message;
+            startButton.style.display = 'block';
+        }
+
         // Handle click and touch events
         function handleInteraction(e) {
-            if (!gameStarted) return; // Ignore interactions before the game starts
+            // Prevent default behavior for touch events to avoid unwanted side effects
+            if (e.type === 'touchstart') {
+                e.preventDefault();
+            }
 
-            if (waitingForDot && !dotVisible) {
-                // If user taps before dot appears, end the game
-                messageDiv.textContent = 'Patience is Required';
-                gameStarted = false;
-                startButton.style.display = 'block'; // Show the start button again
-                waitingForDot = false; // Reset waiting state
-                dotVisible = false; // Ensure the dot is hidden
+            if (gameState === 'idle') return; // Ignore interactions before the game starts
+
+            if (gameState === 'countdown') {
+                // Optionally, prevent interactions during countdown
                 return;
             }
 
-            if (dotVisible) {
+            if (gameState === 'waiting') {
+                // If user taps before dot appears, end the game
+                resetGame('Patience is Required');
+                return;
+            }
+
+            if (gameState === 'dotVisible') {
                 // Calculate distance between interaction and dot center
-                var rect = canvas.getBoundingClientRect();
-                var clickX, clickY;
+                const rect = canvas.getBoundingClientRect();
+                let clickX, clickY;
+
                 if (e.touches && e.touches.length > 0) {
                     clickX = e.touches[0].clientX - rect.left;
                     clickY = e.touches[0].clientY - rect.top;
@@ -174,25 +195,22 @@
                     clickY = e.clientY - rect.top;
                 }
 
-                var distance = Math.hypot(clickX - dotX, clickY - dotY);
+                const distance = Math.hypot(clickX - dotX, clickY - dotY);
                 if (distance <= dotRadius) {
                     // User clicked on the dot
-                    var reactionTimeMs = performance.now() - dotAppearanceTime;
-                    var reactionTimeSec = reactionTimeMs / 1000;
+                    const reactionTimeMs = performance.now() - dotAppearanceTime;
+                    const reactionTimeSec = reactionTimeMs / 1000;
                     messageDiv.textContent = 'Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds';
 
                     // Update best time
                     if (bestTime === null || reactionTimeSec < bestTime) {
                         bestTime = reactionTimeSec;
+                        bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+                        bestTimeDiv.style.display = 'block'; // Ensure it is visible
                     }
 
-                    dotVisible = false;
-                    gameStarted = false;
-                    startButton.style.display = 'block';
-
-                    // Display best time
-                    bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
-                    bestTimeDiv.style.display = 'block'; // Ensure it is visible
+                    // Reset game
+                    resetGame();
                 }
             }
         }
@@ -202,19 +220,17 @@
         document.addEventListener('touchstart', handleInteraction);
 
         // Start button event listener
-        startButton.addEventListener('click', function() {
+        startButton.addEventListener('click', () => {
+            // Reset messages and hide start button
             messageDiv.textContent = '';
             startButton.style.display = 'none';
-            gameStarted = true;
+            gameState = 'countdown';
 
             startCountdown(); // Begin countdown before game starts
         });
 
         // Adjust canvas size when the window is resized
-        window.addEventListener('resize', function() {
-            canvas.width = gameContainer.clientWidth;
-            canvas.height = gameContainer.clientHeight;
-        });
+        window.addEventListener('resize', setCanvasSize);
 
         // Show best time if available when the page loads
         if (bestTime !== null) {
