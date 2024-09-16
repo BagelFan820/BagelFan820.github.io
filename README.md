@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST!</title>
+    <title>Click the Dot FAST</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Reset and basic styling */
@@ -66,7 +66,7 @@
         /* Message display styling */
         #message {
             position: absolute;
-            top: 50%;
+            top: 30%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3;
@@ -92,7 +92,7 @@
     </style>
 </head>
 <body>
-    <div id="title">Click the Dot FAST!</div>
+    <div id="title">Click the Dot FAST</div>
     <div id="bestTime">BEST TIME: N/A</div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
