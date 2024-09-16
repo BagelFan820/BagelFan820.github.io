@@ -37,7 +37,7 @@
         }
         #bestTime {
             position: absolute;
-            top: 40px; /* Position it between the title and game container */
+            top: 100px; /* Position it between the title and game container */
             left: 10px; /* Align to the left */
             z-index: 3;
             font-size: 1em;
