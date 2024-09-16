@@ -65,7 +65,7 @@
 </head>
 <body>
     <div id="title">Click the Dot FAST</div>
-    <div id="bestTime"></div> <!-- Moved outside the gameContainer -->
+    <div id="bestTime"></div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
         <div id="message"></div>
@@ -91,7 +91,7 @@
         var dotVisible = false;
         var dotAppearanceTime;
         var gameStarted = false;
-        var waitingForDot = false; // New variable to check if waiting for dot appearance
+        var waitingForDot = false; // Variable to check if waiting for dot appearance
         var bestTime = null;
 
         // Function to draw the dot
@@ -196,6 +196,7 @@
             }
         }
 
+        // Event listeners for clicks and touches
         document.addEventListener('click', handleInteraction);
         document.addEventListener('touchstart', handleInteraction);
 
