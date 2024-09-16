@@ -13,7 +13,7 @@
             position: relative;
             width: 100%;
             max-width: 500px;
-            height: 80vh;
+            height: 60vh;
             margin: 0 auto;
             background-color: #ffffff;
             overflow: hidden;
