@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <title>Click the Dot FAST!!</title>
@@ -97,6 +96,7 @@
         let dotAppearanceTime = 0;
         let gameState = 'idle'; // Possible states: 'idle', 'countdown', 'waiting', 'dotVisible'
         let bestTime = null;
+        let dotTimeout; // Timeout for dot appearance
 
         // Initialize bestTime from localStorage if available
         if (localStorage.getItem('bestTime')) {
@@ -149,7 +149,7 @@
             // Random delay between 2 and 8 seconds (2000 to 8000 milliseconds)
             const delay = Math.random() * 6000 + 2000;
 
-            setTimeout(() => {
+            dotTimeout = setTimeout(() => {
                 // Show the dot at a random position within the canvas
                 dotX = Math.random() * (canvas.width - 2 * dotRadius) + dotRadius;
                 dotY = Math.random() * (canvas.height - 2 * dotRadius) + dotRadius;
@@ -166,6 +166,10 @@
             dotVisible = false;
             messageDiv.textContent = message;
             startButton.style.display = 'block';
+            if (dotTimeout) {
+                clearTimeout(dotTimeout); // Clear the timeout to stop the dot from appearing
+                dotTimeout = null;
+            }
         }
 
         // Handle click and touch events
