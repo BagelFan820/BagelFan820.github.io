@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST</title>
+    <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Reset and basic styling */
@@ -89,15 +89,77 @@
             z-index: 2;
             cursor: pointer;
         }
+
+        /* Leaderboard container styling */
+        #leaderboardContainer {
+            position: absolute;
+            bottom: 20px; /* Position at the bottom of the page */
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #ffffff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            z-index: 3;
+        }
+        #leaderboardContainer h2 {
+            text-align: center;
+            color: #ff6600;
+            margin-bottom: 10px;
+        }
+        #leaderboardList {
+            list-style: decimal inside;
+            padding-left: 0;
+            margin: 0;
+        }
+        #leaderboardList li {
+            margin-bottom: 5px;
+            font-size: 1em;
+            color: #333;
+        }
     </style>
+    <!-- Firebase SDKs -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+      import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBbqBN4156KJNwTiEzPQqDfBFmdtkfL1Z8",
+        authDomain: "clickthedotfast-84528.firebaseapp.com",
+        projectId: "clickthedotfast-84528",
+        storageBucket: "clickthedotfast-84528.appspot.com",
+        messagingSenderId: "603486229797",
+        appId: "1:603486229797:web:c6e3092250cc9df0f3b6cc",
+        measurementId: "G-JVPWNZ4LB4"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // Initialize Firestore
+      const db = getFirestore(app);
+    </script>
 </head>
 <body>
-    <div id="title">Click the Dot FAST</div>
+    <div id="title">Click the Dot FAST!</div>
     <div id="bestTime">BEST TIME: N/A</div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
         <div id="message"></div>
         <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div id="leaderboardContainer">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboardList">
+            <!-- Scores will be dynamically inserted here -->
+        </ol>
     </div>
 
     <script>
@@ -108,6 +170,7 @@
         const startButton = document.getElementById('startButton');
         const messageDiv = document.getElementById('message');
         const bestTimeDiv = document.getElementById('bestTime');
+        const leaderboardList = document.getElementById('leaderboardList');
 
         // Set canvas size to match gameContainer
         function setCanvasSize() {
@@ -151,7 +214,7 @@
             // Draw explosion particles if any
             if (particles.length > 0) {
                 particles.forEach((particle, index) => {
-                    ctx.fillStyle = particle.color;
+                    ctx.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
                     ctx.beginPath();
                     ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -253,7 +316,7 @@
                 const vx = Math.cos(angle) * speed;
                 const vy = Math.sin(angle) * speed;
                 const size = Math.random() * 3 + 2;
-                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const color = getRandomColor();
                 const alpha = 1;
                 const fade = 0.02;
 
@@ -268,6 +331,54 @@
                     fade: fade
                 });
             }
+        }
+
+        // Function to generate a random RGB color
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return { r, g, b };
+        }
+
+        // Function to save a score to Firestore
+        async function saveScore(playerName, reactionTime) {
+            try {
+                await addDoc(collection(db, "leaderboard"), {
+                    name: playerName,
+                    time: reactionTime,
+                    timestamp: new Date()
+                });
+                console.log("Score saved successfully!");
+            } catch (e) {
+                console.error("Error saving score: ", e);
+            }
+        }
+
+        // Function to retrieve and display top scores
+        async function getTopScores(limitNumber = 10) {
+            try {
+                const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(limitNumber));
+                const querySnapshot = await getDocs(q);
+                const scores = [];
+                querySnapshot.forEach((doc) => {
+                    scores.push(doc.data());
+                });
+                displayLeaderboard(scores);
+            } catch (e) {
+                console.error("Error fetching scores: ", e);
+            }
+        }
+
+        // Function to display the leaderboard
+        function displayLeaderboard(scores) {
+            leaderboardList.innerHTML = ""; // Clear existing scores
+
+            scores.forEach((score, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${score.name}: ${score.time.toFixed(3)} seconds`;
+                leaderboardList.appendChild(listItem);
+            });
         }
 
         // Handle click and touch events
@@ -312,6 +423,17 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
+                    // Prompt for player's name
+                    let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
+                    if (playerName === null || playerName.trim() === "") {
+                        playerName = "Anonymous";
+                    } else {
+                        playerName = sanitizeInput(playerName.trim());
+                    }
+
+                    // Save the score to Firestore
+                    saveScore(playerName, reactionTimeSec);
+
                     // Show the reaction time message
                     resetGame('Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds');
 
@@ -324,8 +446,18 @@
                         // Save best time to localStorage
                         localStorage.setItem('bestTime', bestTime.toFixed(3));
                     }
+
+                    // Refresh the leaderboard
+                    getTopScores();
                 }
             }
+        }
+
+        // Function to sanitize player input
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
         }
 
         // Event listeners for clicks and touches
@@ -342,6 +474,11 @@
 
             startCountdown(); // Begin countdown before game starts
         });
+
+        // Fetch and display the leaderboard on page load
+        window.onload = function() {
+            getTopScores();
+        };
     </script>
 </body>
 </html>
