@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST!</title>
+    <title>Click the Dot FAST</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Reset and basic styling */
@@ -169,6 +169,7 @@
         /* Leaderboard container styling */
         #leaderboardContainer {
             padding: 20px;
+            overflow-y: auto; /* Add scroll if content overflows */
         }
         #leaderboardContainer h2 {
             text-align: center;
@@ -501,38 +502,42 @@
                     createExplosion(dotX, dotY);
 
                     // Fetch current top 10 scores to determine if this score qualifies
-                    const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
-                    const querySnapshot = await getDocs(q);
-                    let qualifies = false;
+                    try {
+                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
+                        const querySnapshot = await getDocs(q);
+                        let qualifies = false;
 
-                    if (querySnapshot.empty) {
-                        // No scores yet, so it qualifies
-                        qualifies = true;
-                    } else if (querySnapshot.size < 10) {
-                        // Less than 10 scores, it qualifies
-                        qualifies = true;
-                    } else {
-                        // Get the worst (10th) score
-                        let worstScore = 0;
-                        querySnapshot.forEach((doc) => {
-                            worstScore = doc.data().time;
-                        });
-                        if (reactionTimeSec < worstScore) {
+                        if (querySnapshot.empty) {
+                            // No scores yet, so it qualifies
                             qualifies = true;
-                        }
-                    }
-
-                    if (qualifies) {
-                        // Prompt for player's name
-                        let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
-                        if (playerName === null || playerName.trim() === "") {
-                            playerName = "Anonymous";
+                        } else if (querySnapshot.size < 10) {
+                            // Less than 10 scores, it qualifies
+                            qualifies = true;
                         } else {
-                            playerName = sanitizeInput(playerName.trim());
+                            // Get the worst (10th) score
+                            let worstScore = 0;
+                            querySnapshot.forEach((doc) => {
+                                worstScore = doc.data().time;
+                            });
+                            if (reactionTimeSec < worstScore) {
+                                qualifies = true;
+                            }
                         }
 
-                        // Save the score to Firestore
-                        await saveScore(playerName, reactionTimeSec);
+                        if (qualifies) {
+                            // Prompt for player's name
+                            let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
+                            if (playerName === null || playerName.trim() === "") {
+                                playerName = "Anonymous";
+                            } else {
+                                playerName = sanitizeInput(playerName.trim());
+                            }
+
+                            // Save the score to Firestore
+                            await saveScore(playerName, reactionTimeSec);
+                        }
+                    } catch (error) {
+                        console.error("Error during qualification check or saving score:", error);
                     }
 
                     // Show the reaction time message
