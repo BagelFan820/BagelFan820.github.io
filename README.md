@@ -8,6 +8,7 @@
             overflow: hidden;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            position: relative;
         }
         #gameContainer {
             position: relative;
@@ -36,7 +37,7 @@
         }
         #bestTime {
             position: absolute;
-            top: calc(50vh - 20px); /* Position above the game container's top border */
+            top: calc(50% - 30vh - 20px); /* Adjusted to position above the game container */
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
