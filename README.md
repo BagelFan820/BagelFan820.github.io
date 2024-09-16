@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <title>Click the Dot FAST!</title>
@@ -14,27 +13,108 @@
             height: 100vh;
         }
 
-        /* Game container styling */
-        #gameContainer {
-            position: relative;
-            width: 100%;
+        /* Header styling */
+        #header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
             max-width: 500px;
-            height: 60vh; /* 60% of the viewport height */
-            margin: 0 auto;
-            background-color: #ffffff;
-            overflow: hidden;
-            border: 2px solid #000;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            z-index: 5;
         }
 
-        /* Title styling */
-        #title {
-            text-align: center;
-            font-size: 2em;
-            margin: 20px 0;
+        /* Best time display styling */
+        #bestTime {
+            font-size: 1em;
+            color: #333;
+        }
+
+        /* Toggle switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff6600;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Toggle label styling */
+        .toggle-label {
+            font-size: 1em;
             color: #ff6600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Content Container styling */
+        #contentContainer {
+            position: absolute;
+            top: 120px; /* Adjusted to accommodate the header */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            height: calc(100vh - 160px); /* Adjusted height */
+            background-color: #ffffff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 3;
+        }
+
+        /* Game and Leaderboard container styling */
+        #gameContainer, #leaderboardContainer {
+            width: 100%;
+            height: 100%;
+            display: none; /* Hidden by default */
+            position: relative;
+        }
+
+        /* Initially show the game container */
+        #gameContainer.active, #leaderboardContainer.active {
+            display: block;
         }
 
         /* Start button styling */
@@ -49,19 +129,12 @@
             border-radius: 5px;
             color: #fff;
             transition: background-color 0.3s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         #startButton:hover {
             background-color: #e55b00;
-        }
-
-        /* Best time display styling */
-        #bestTime {
-            position: absolute;
-            top: 116px; /* Between the title and game container */
-            left: 15px; /* Align to the left */
-            z-index: 3;
-            font-size: 1em;
-            color: #333;
         }
 
         /* Message display styling */
@@ -87,22 +160,15 @@
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 2;
             cursor: pointer;
         }
 
         /* Leaderboard container styling */
         #leaderboardContainer {
-            position: absolute;
-            bottom: 20px; /* Position at the bottom of the page */
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #ffffff;
-            border: 2px solid #000;
-            border-radius: 10px;
-            z-index: 3;
+            padding: 20px;
         }
         #leaderboardContainer h2 {
             text-align: center;
@@ -126,7 +192,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
       import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
+    
       // Your web app's Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyBbqBN4156KJNwTiEzPQqDfBFmdtkfL1Z8",
@@ -137,41 +203,51 @@
         appId: "1:603486229797:web:c6e3092250cc9df0f3b6cc",
         measurementId: "G-JVPWNZ4LB4"
       };
-
+    
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
-
+    
       // Initialize Firestore
       const db = getFirestore(app);
     </script>
 </head>
 <body>
-    <div id="title">Click the Dot FAST!</div>
-    <div id="bestTime">BEST TIME: N/A</div>
-    <div id="gameContainer">
-        <button id="startButton">Start</button>
-        <div id="message"></div>
-        <canvas id="gameCanvas"></canvas>
+    <div id="header">
+        <div id="bestTime">BEST TIME: N/A</div>
+        <div>
+            <label class="switch">
+                <input type="checkbox" id="toggleLeaderboard">
+                <span class="slider round"></span>
+            </label>
+            <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
+        </div>
     </div>
-
-    <!-- Leaderboard Section -->
-    <div id="leaderboardContainer">
-        <h2>Leaderboard</h2>
-        <ol id="leaderboardList">
-            <!-- Scores will be dynamically inserted here -->
-        </ol>
+    <div id="contentContainer">
+        <div id="gameContainer" class="active">
+            <button id="startButton">Start</button>
+            <div id="message"></div>
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div id="leaderboardContainer">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboardList">
+                <!-- Scores will be dynamically inserted here -->
+            </ol>
+        </div>
     </div>
 
     <script>
         // Get references to HTML elements
         const gameContainer = document.getElementById('gameContainer');
+        const leaderboardContainer = document.getElementById('leaderboardContainer');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const startButton = document.getElementById('startButton');
         const messageDiv = document.getElementById('message');
         const bestTimeDiv = document.getElementById('bestTime');
         const leaderboardList = document.getElementById('leaderboardList');
+        const toggleLeaderboard = document.getElementById('toggleLeaderboard');
 
         // Set canvas size to match gameContainer
         function setCanvasSize() {
@@ -383,7 +459,7 @@
         }
 
         // Handle click and touch events
-        function handleInteraction(e) {
+        async function handleInteraction(e) {
             // Prevent default behavior for touch events to avoid unwanted side effects
             if (e.type === 'touchstart') {
                 e.preventDefault();
@@ -424,12 +500,99 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
-                    // Prompt for player's name
-                    let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
-                    if (playerName === null || playerName.trim() === "") {
-                        playerName = "Anonymous";
+                    // Fetch current top 10 scores to determine if this score qualifies
+                    const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
+                    const querySnapshot = await getDocs(q);
+                    let qualifies = false;
+
+                    if (querySnapshot.empty) {
+                        // No scores yet, so it qualifies
+                        qualifies = true;
+                    } else if (querySnapshot.size < 10) {
+                        // Less than 10 scores, it qualifies
+                        qualifies = true;
                     } else {
-                        playerName = sanitizeInput(playerName.trim());
+                        // Get the worst (10th) score
+                        let worstScore = 0;
+                        querySnapshot.forEach((doc) => {
+                            worstScore = doc.data().time;
+                        });
+                        if (reactionTimeSec < worstScore) {
+                            qualifies = true;
+                        }
                     }
 
-                    
+                    if (qualifies) {
+                        // Prompt for player's name
+                        let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
+                        if (playerName === null || playerName.trim() === "") {
+                            playerName = "Anonymous";
+                        } else {
+                            playerName = sanitizeInput(playerName.trim());
+                        }
+
+                        // Save the score to Firestore
+                        await saveScore(playerName, reactionTimeSec);
+                    }
+
+                    // Show the reaction time message
+                    resetGame('Reaction Time: ' + reactionTimeSec.toFixed(3) + ' seconds');
+
+                    // Update best time if necessary
+                    if (bestTime === null || reactionTimeSec < bestTime) {
+                        bestTime = reactionTimeSec;
+                        bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+                        bestTimeDiv.style.display = 'block'; // Ensure it is visible
+
+                        // Save best time to localStorage
+                        localStorage.setItem('bestTime', bestTime.toFixed(3));
+                    }
+
+                    // Refresh the leaderboard
+                    getTopScores();
+                }
+            }
+        }
+
+        // Function to sanitize player input
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        // Event listeners for clicks and touches
+        document.addEventListener('click', handleInteraction);
+        document.addEventListener('touchstart', handleInteraction);
+
+        // Start button event listener
+        startButton.addEventListener('click', () => {
+            // Reset messages and hide start button
+            messageDiv.textContent = '';
+            messageDiv.style.display = 'none';
+            startButton.style.display = 'none';
+            gameState = 'countdown';
+
+            startCountdown(); // Begin countdown before game starts
+        });
+
+        // Leaderboard Toggle event listener
+        toggleLeaderboard.addEventListener('change', () => {
+            if (toggleLeaderboard.checked) {
+                // Show leaderboard and hide game
+                gameContainer.classList.remove('active');
+                leaderboardContainer.classList.add('active');
+            } else {
+                // Show game and hide leaderboard
+                leaderboardContainer.classList.remove('active');
+                gameContainer.classList.add('active');
+            }
+        });
+
+        // Fetch and display the leaderboard on page load
+        window.onload = function() {
+            getTopScores();
+        };
+    </script>
+</body>
+</html>
