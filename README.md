@@ -10,16 +10,12 @@
             background-color: #f0f0f0;
             position: relative;
         }
-        #container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto; /* Center the container */
-            position: relative;
-        }
         #gameContainer {
             position: relative;
             width: 100%;
+            max-width: 500px;
             height: 60vh; /* Adjusted height to 60% of the viewport */
+            margin: 0 auto;
             background-color: #ffffff;
             overflow: hidden;
             border: 2px solid #000;
@@ -41,8 +37,8 @@
         }
         #bestTime {
             position: absolute;
-            top: 60px; /* Position it between the title and game container */
-            left: 0; /* Align to the left of the container */
+            top: 40px; /* Position it between the title and game container */
+            left: 10px; /* Align to the left */
             z-index: 3;
             font-size: 1em;
             color: #333;
@@ -69,13 +65,11 @@
 </head>
 <body>
     <div id="title">Click the Dot FAST</div>
-    <div id="container">
-        <div id="bestTime"></div> <!-- Aligned within the container -->
-        <div id="gameContainer">
-            <button id="startButton">Start</button>
-            <div id="message"></div>
-            <canvas id="gameCanvas"></canvas>
-        </div>
+    <div id="bestTime"></div> <!-- Moved outside the gameContainer -->
+    <div id="gameContainer">
+        <button id="startButton">Start</button>
+        <div id="message"></div>
+        <canvas id="gameCanvas"></canvas>
     </div>
 
     <script>
@@ -92,7 +86,7 @@
         canvas.height = gameContainer.clientHeight;
 
         // Game variables
-        var dotRadius = 40; // Increased size of the dot
+        var dotRadius = 40; // Increase size of the dot
         var dotX, dotY;
         var dotVisible = false;
         var dotAppearanceTime;
