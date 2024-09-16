@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Click the Dot FAST!</title>
+    <title>Click the Dot FAST!!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -67,7 +67,7 @@
 </head>
 <body>
     <div id="title">Click the Dot FAST</div>
-    <div id="bestTime"></div>
+    <div id="bestTime">BEST TIME: N/A</div>
     <div id="gameContainer">
         <button id="startButton">Start</button>
         <div id="message"></div>
@@ -97,6 +97,12 @@
         let dotAppearanceTime = 0;
         let gameState = 'idle'; // Possible states: 'idle', 'countdown', 'waiting', 'dotVisible'
         let bestTime = null;
+
+        // Initialize bestTime from localStorage if available
+        if (localStorage.getItem('bestTime')) {
+            bestTime = parseFloat(localStorage.getItem('bestTime'));
+            bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
+        }
 
         // Function to draw the dot
         function draw() {
@@ -207,6 +213,9 @@
                         bestTime = reactionTimeSec;
                         bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
                         bestTimeDiv.style.display = 'block'; // Ensure it is visible
+
+                        // Save best time to localStorage
+                        localStorage.setItem('bestTime', bestTime.toFixed(3));
                     }
 
                     // Reset game
@@ -231,12 +240,6 @@
 
         // Adjust canvas size when the window is resized
         window.addEventListener('resize', setCanvasSize);
-
-        // Show best time if available when the page loads
-        if (bestTime !== null) {
-            bestTimeDiv.textContent = 'BEST TIME: ' + bestTime.toFixed(3) + ' seconds';
-            bestTimeDiv.style.display = 'block'; // Ensure it is visible
-        }
 
         // Start the drawing loop
         draw();
