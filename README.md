@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -267,6 +268,11 @@
             margin-bottom: 10px;
         }
 
+        .modal-content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
         .modal-content input {
             width: calc(100% - 20px);
             padding: 10px;
@@ -391,6 +397,9 @@
         const playerNameInput = document.getElementById('playerNameInput');
         const nameSubmitButton = document.getElementById('nameSubmitButton');
         const nameCancelButton = document.getElementById('nameCancelButton');
+
+        // Flag to prevent multiple modals
+        let isPromptActive = false;
 
         // Set canvas size to match gameContainer
         function setCanvasSize() {
@@ -624,6 +633,9 @@
 
         // Function to show the custom modal for player name input
         function showNameModal(reactionTimeSec) {
+            if (isPromptActive) return; // Prevent multiple modals
+            isPromptActive = true;
+
             nameModal.style.display = 'flex'; // Show the modal
             playerNameInput.value = ''; // Clear previous input
             playerNameInput.focus(); // Focus on the input field
@@ -637,6 +649,7 @@
                 await saveScore(playerName, reactionTimeSec);
                 nameModal.style.display = 'none'; // Hide the modal after submitting
                 document.body.classList.remove('modal-open'); // Re-enable background scrolling
+                isPromptActive = false; // Reset the flag
                 getTopScores(); // Refresh leaderboard
             };
 
@@ -644,15 +657,17 @@
             nameCancelButton.onclick = function() {
                 nameModal.style.display = 'none'; // Hide the modal if canceled
                 document.body.classList.remove('modal-open'); // Re-enable background scrolling
+                isPromptActive = false; // Reset the flag
             };
 
-            // Optional: Close the modal when clicking outside the modal content
-            window.onclick = function(event) {
+            // Close the modal when clicking outside the modal content
+            window.addEventListener('click', function(event) {
                 if (event.target == nameModal) {
                     nameModal.style.display = 'none';
                     document.body.classList.remove('modal-open');
+                    isPromptActive = false;
                 }
-            };
+            }, { once: true }); // Use { once: true } to ensure the handler is called only once per modal display
         }
 
         // Function to sanitize player input
@@ -704,24 +719,24 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
+                    // Hide the dot and reset game state
+                    dotVisible = false;
+                    gameState = 'idle';
+                    clearTimeout(dotTimeout);
+                    dotTimeout = null;
+
                     // Fetch current top 10 scores to determine if this score qualifies
                     try {
                         const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
                         const querySnapshot = await getDocs(q);
                         let qualifies = false;
 
-                        if (querySnapshot.empty) {
-                            // No scores yet, so it qualifies
-                            qualifies = true;
-                        } else if (querySnapshot.size < 10) {
+                        if (querySnapshot.empty || querySnapshot.size < 10) {
                             // Less than 10 scores, it qualifies
                             qualifies = true;
                         } else {
                             // Get the worst (10th) score
-                            let worstScore = 0;
-                            querySnapshot.forEach((doc) => {
-                                worstScore = doc.data().time;
-                            });
+                            let worstScore = querySnapshot.docs[querySnapshot.size - 1].data().time;
                             if (reactionTimeSec < worstScore) {
                                 qualifies = true;
                             }
