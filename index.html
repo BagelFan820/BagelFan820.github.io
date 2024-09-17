@@ -695,7 +695,7 @@
         // Function to show the custom modal for player name input
         function showNameModal(reactionTimeSec) {
            // Update the modal title to include reaction time
-            const modalTitle = nameModal.querySelector('#modalTitle');
+            const modalTitle = document.getElementById('modalTitle');
             modalTitle.textContent = `Reaction Time: ${reactionTimeSec.toFixed(3)} sec`;
 
             nameModal.style.display = 'flex'; // Show the modal
