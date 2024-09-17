@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -246,31 +247,41 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            display: flex; /* Added to enable flex properties */
             align-items: center;
             justify-content: center;
         }
 
         .modal-content {
             background-color: #ffffff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             text-align: center;
-            max-width: 300px;
-            width: 80%;
-            margin: 0 auto;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease-out;
         }
 
         .modal-content h2 {
             color: #ff6600;
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 15px;
         }
 
         .modal-content input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
+            width: 100%;
+            padding: 12px 10px;
+            margin-bottom: 20px;
             font-size: 1em;
+            border: 2px solid #ff6600;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        .modal-content input:focus {
+            border-color: #e55b00;
+            outline: none;
         }
 
         .modal-buttons {
@@ -279,7 +290,7 @@
         }
 
         .modal-buttons button {
-            padding: 10px 20px;
+            padding: 10px 25px;
             font-size: 1em;
             cursor: pointer;
             border: none;
@@ -303,6 +314,18 @@
 
         #nameCancelButton:hover {
             background-color: #999999;
+        }
+
+        /* Animation for modal */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -709,6 +732,7 @@
         function showNameModal(reactionTimeSec) {
             nameModal.style.display = 'flex'; // Show the modal
             playerNameInput.value = ''; // Clear previous input
+            playerNameInput.focus(); // Focus on the input to trigger keyboard on mobile
 
             // Handle the submit button click
             nameSubmitButton.onclick = async function() {
@@ -722,6 +746,14 @@
             nameCancelButton.onclick = function() {
                 nameModal.style.display = 'none'; // Hide the modal if canceled
             };
+
+            // Handle pressing 'Enter' key to submit
+            playerNameInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    nameSubmitButton.click();
+                }
+            });
         }
 
         // Function to sanitize player input
