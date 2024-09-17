@@ -397,8 +397,8 @@
     <!-- Modal for Name Input -->
     <div id="nameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
-            <h2 id="modalTitle">Reaction Time: ${reactionTimeSec.toFixed(3)} sec;</h2>
-            <p>A New Top Score! Nice Job!</p>
+            <h2 id="modalTitle">Reaction Time:</h2>
+            <p>New Top Score! Nice Job!</p>
             <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" aria-label="Player Name">
             <div class="modal-buttons">
                 <button id="nameSubmitButton" aria-label="Submit your name">Submit</button>
@@ -696,7 +696,7 @@
         function showNameModal(reactionTimeSec) {
            // Update the modal title to include reaction time
             const modalTitle = nameModal.querySelector('#modalTitle');
-            modalTitle.textContent = `Congratulations! Your Time: ${reactionTimeSec.toFixed(3)} sec`;
+            modalTitle.textContent = `Reaction: ${reactionTimeSec.toFixed(3)} sec`;
 
             nameModal.style.display = 'flex'; // Show the modal
             playerNameInput.value = ''; // Clear previous input
