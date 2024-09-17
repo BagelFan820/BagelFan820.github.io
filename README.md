@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -247,41 +246,34 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            display: flex; /* Added to enable flex properties */
+            display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .modal-content {
             background-color: #ffffff;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
-            max-width: 350px;
-            width: 90%;
+            max-width: 300px;
+            width: 80%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: slideDown 0.3s ease-out;
         }
 
         .modal-content h2 {
             color: #ff6600;
-            font-size: 1.8em;
-            margin-bottom: 15px;
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
 
         .modal-content input {
-            width: 100%;
-            padding: 12px 10px;
-            margin-bottom: 20px;
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
             font-size: 1em;
-            border: 2px solid #ff6600;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            transition: border-color 0.3s;
-        }
-
-        .modal-content input:focus {
-            border-color: #e55b00;
-            outline: none;
         }
 
         .modal-buttons {
@@ -290,7 +282,7 @@
         }
 
         .modal-buttons button {
-            padding: 10px 25px;
+            padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
             border: none;
@@ -316,16 +308,9 @@
             background-color: #999999;
         }
 
-        /* Animation for modal */
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        /* Prevent background scrolling when modal is active */
+        body.modal-open {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -357,8 +342,9 @@
     <!-- Modal for Name Input -->
     <div id="nameModal" class="modal">
         <div class="modal-content">
-            <h2>Enter Your Name</h2>
-            <input type="text" id="playerNameInput" placeholder="Your Name" maxlength="20">
+            <h2>Congratulations!</h2>
+            <p>You made it to the leaderboard.</p>
+            <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
             <div class="modal-buttons">
                 <button id="nameSubmitButton">Submit</button>
                 <button id="nameCancelButton">Cancel</button>
@@ -636,6 +622,46 @@
             });
         }
 
+        // Function to show the custom modal for player name input
+        function showNameModal(reactionTimeSec) {
+            nameModal.style.display = 'flex'; // Show the modal
+            playerNameInput.value = ''; // Clear previous input
+            playerNameInput.focus(); // Focus on the input field
+
+            // Prevent background scrolling
+            document.body.classList.add('modal-open');
+
+            // Handle the submit button click
+            nameSubmitButton.onclick = async function() {
+                const playerName = sanitizeInput(playerNameInput.value.trim()) || "Anonymous";
+                await saveScore(playerName, reactionTimeSec);
+                nameModal.style.display = 'none'; // Hide the modal after submitting
+                document.body.classList.remove('modal-open'); // Re-enable background scrolling
+                getTopScores(); // Refresh leaderboard
+            };
+
+            // Handle the cancel button click
+            nameCancelButton.onclick = function() {
+                nameModal.style.display = 'none'; // Hide the modal if canceled
+                document.body.classList.remove('modal-open'); // Re-enable background scrolling
+            };
+
+            // Optional: Close the modal when clicking outside the modal content
+            window.onclick = function(event) {
+                if (event.target == nameModal) {
+                    nameModal.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                }
+            };
+        }
+
+        // Function to sanitize player input
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
         // Handle click and touch events using pointerdown
         async function handleInteraction(e) {
             // Prevent default behavior for touch events to avoid unwanted side effects
@@ -726,41 +752,6 @@
                     getTopScores();
                 }
             }
-        }
-
-        // Function to show the custom modal for player name input
-        function showNameModal(reactionTimeSec) {
-            nameModal.style.display = 'flex'; // Show the modal
-            playerNameInput.value = ''; // Clear previous input
-            playerNameInput.focus(); // Focus on the input to trigger keyboard on mobile
-
-            // Handle the submit button click
-            nameSubmitButton.onclick = async function() {
-                const playerName = sanitizeInput(playerNameInput.value.trim()) || "Anonymous";
-                await saveScore(playerName, reactionTimeSec);
-                nameModal.style.display = 'none'; // Hide the modal after submitting
-                getTopScores(); // Refresh leaderboard
-            };
-
-            // Handle the cancel button click
-            nameCancelButton.onclick = function() {
-                nameModal.style.display = 'none'; // Hide the modal if canceled
-            };
-
-            // Handle pressing 'Enter' key to submit
-            playerNameInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    nameSubmitButton.click();
-                }
-            });
-        }
-
-        // Function to sanitize player input
-        function sanitizeInput(input) {
-            const div = document.createElement('div');
-            div.textContent = input;
-            return div.innerHTML;
         }
 
         // Event listeners for pointerdown
