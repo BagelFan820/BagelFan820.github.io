@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Reset and basic styling */
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
+            padding: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             position: relative;
-            height: 100vh;
         }
 
         /* Header styling */
@@ -97,12 +99,31 @@
             transform: translateX(-50%);
             width: 90%;
             max-width: 500px;
-            height: calc(100vh - 160px); /* Adjusted height */
+            height: 60vh; /* Adjust as needed */
             background-color: #ffffff;
             border: 2px solid #000;
             border-radius: 10px;
             overflow: hidden;
             z-index: 3;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            #contentContainer {
+                height: 70vh; /* Taller on smaller screens */
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1200px) {
+            #contentContainer {
+                height: 60vh; /* Default for medium screens */
+            }
+        }
+
+        @media (min-width: 1201px) {
+            #contentContainer {
+                height: 50vh; /* Shorter for larger screens */
+            }
         }
 
         /* Game and Leaderboard container styling */
@@ -167,25 +188,53 @@
             cursor: pointer;
         }
 
-        /* Leaderboard container styling */
+        /* Enhanced Leaderboard container styling */
         #leaderboardContainer {
             padding: 20px;
             overflow-y: auto; /* Add scroll if content overflows */
+            background-color: #fafafa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
         #leaderboardContainer h2 {
             text-align: center;
             color: #ff6600;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: bold;
         }
         #leaderboardList {
-            list-style: decimal inside;
+            list-style: none; /* Remove default numbering */
             padding-left: 0;
             margin: 0;
         }
         #leaderboardList li {
-            margin-bottom: 5px;
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        #leaderboardList li:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        #leaderboardList li .rank {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff6600;
+        }
+        #leaderboardList li .name {
             font-size: 1em;
             color: #333;
+        }
+        #leaderboardList li .time {
+            font-size: 1em;
+            color: #555;
         }
     </style>
 </head>
@@ -454,7 +503,28 @@
 
             scores.forEach((score, index) => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `${score.name}: ${score.time.toFixed(3)} seconds`;
+
+                // Create rank element
+                const rank = document.createElement('span');
+                rank.classList.add('rank');
+                rank.textContent = `#${index + 1}`;
+
+                // Create name element
+                const name = document.createElement('span');
+                name.classList.add('name');
+                name.textContent = score.name;
+
+                // Create time element
+                const time = document.createElement('span');
+                time.classList.add('time');
+                time.textContent = `${score.time.toFixed(3)} sec`;
+
+                // Append elements to listItem
+                listItem.appendChild(rank);
+                listItem.appendChild(name);
+                listItem.appendChild(time);
+
+                // Append listItem to leaderboardList
                 leaderboardList.appendChild(listItem);
             });
         }
