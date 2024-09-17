@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Click the Dot FAST!</title>
@@ -187,6 +188,32 @@
             color: #333;
         }
     </style>
+</head>
+<body>
+    <div id="header">
+        <div id="bestTime">BEST TIME: N/A</div>
+        <div>
+            <label class="switch">
+                <input type="checkbox" id="toggleLeaderboard">
+                <span class="slider round"></span>
+            </label>
+            <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
+        </div>
+    </div>
+    <div id="contentContainer">
+        <div id="gameContainer" class="active">
+            <button id="startButton">Start</button>
+            <div id="message"></div>
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div id="leaderboardContainer">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboardList">
+                <!-- Scores will be dynamically inserted here -->
+            </ol>
+        </div>
+    </div>
+
     <!-- Firebase and Game Script -->
     <script type="module">
         // Import Firebase SDK functions
