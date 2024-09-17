@@ -246,6 +246,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            display: flex;
             align-items: center;
             justify-content: center;
         }
@@ -637,10 +638,11 @@
             // Slight delay to ensure modal is rendered before focusing
             setTimeout(() => {
                 playerNameInput.focus(); // Focus on the input field to trigger keyboard on mobile
-            }, 100);
+            }, 200); // Increased delay to 200ms
 
             // Handle the submit button click
-            nameSubmitButton.onclick = async function() {
+            nameSubmitButton.onclick = async function(event) {
+                event.stopPropagation(); // Prevent event from bubbling up
                 const playerName = sanitizeInput(playerNameInput.value.trim()) || "Anonymous";
                 await saveScore(playerName, reactionTimeSec);
                 nameModal.style.display = 'none'; // Hide the modal after submitting
@@ -649,17 +651,24 @@
             };
 
             // Handle the cancel button click
-            nameCancelButton.onclick = function() {
+            nameCancelButton.onclick = function(event) {
+                event.stopPropagation(); // Prevent event from bubbling up
                 nameModal.style.display = 'none'; // Hide the modal if canceled
                 document.body.classList.remove('modal-open'); // Re-enable background scrolling
             };
 
-            // Optional: Close the modal when clicking outside the modal content
-            window.onclick = function(event) {
+            // Close the modal when clicking outside the modal content
+            nameModal.onclick = function(event) {
                 if (event.target == nameModal) {
                     nameModal.style.display = 'none';
                     document.body.classList.remove('modal-open');
                 }
+            };
+
+            // Prevent clicks inside the modal content from closing the modal
+            const modalContent = nameModal.querySelector('.modal-content');
+            modalContent.onclick = function(event) {
+                event.stopPropagation();
             };
         }
 
@@ -672,6 +681,11 @@
 
         // Handle click and touch events using pointerdown
         async function handleInteraction(e) {
+            // Check if modal is open
+            if (nameModal.style.display === 'flex') {
+                return; // Do not process game interactions when modal is open
+            }
+
             // Prevent default behavior for touch events to avoid unwanted side effects
             if (e.pointerType === 'touch') {
                 e.preventDefault();
