@@ -663,7 +663,7 @@
         }
 
         // Function to retrieve and display top scores
-        async function getTopScores(limitNumber = 100) {
+        async function getTopScores(limitNumber = 10) {
             try {
                 const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(limitNumber));
                 const querySnapshot = await getDocs(q);
