@@ -217,27 +217,51 @@
             touch-action: manipulation; /* Improves touch responsiveness */
         }
 
-        /* Leaderboard List Item Styling */
-#leaderboardList li {
-    background-color: #fff;
-    margin-bottom: 10px;
-    padding: 12px 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex; /* Use Flexbox for alignment */
-    justify-content: space-between; /* Distribute space between elements */
-    align-items: center;
-    transition: background-color 0.3s, transform 0.3s;
-    max-width: 100%;
-}
+       /* Leaderboard Container Styling */
+        #leaderboardContainer {
+            height: 100%;
+            width: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fafafa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
 
-/* Hover effect for list items */
-#leaderboardList li:hover {
-    background-color: #f0f0f0;
-    transform: translateY(-2px);
-}
+        #leaderboardContainer h2 {
+            text-align: center;
+            color: #ff6600;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
 
-/* Rank, Name, and Time Styling */
+        #leaderboardList {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        #leaderboardList li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.3s;
+            max-width: 100%;
+        }
+
+        #leaderboardList li:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        /* Rank, Name, and Time Styling */
 #leaderboardList li .rank {
     font-size: 1em;
     color: #ff6600; /* Original color for rank */
@@ -260,7 +284,6 @@
     flex: 0 0 auto; /* Fixed size element */
     margin-left: auto; /* Push time to the right */
 }
-
 
         /* Modal Styling */
         .modal {
