@@ -3,8 +3,6 @@
     <meta charset="UTF-8">
     <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Import Orbitron Font from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
         /* Reset and basic styling */
         html, body {
@@ -17,123 +15,127 @@
             position: relative;
         }
 
-        /* Game Title Styling */
-        #gameTitle {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
-            color: #ff6600;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            text-align: center;
-            z-index: 6;
-        }
-
-        /* Best Time Positioning */
-        #bestTime {
-            position: absolute;
-            top: 80px; /* Adjusted to accommodate the game title */
-            left: 20px;
-            font-size: 1.2em;
-            color: #ff6600;
-            font-weight: bold;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
         /* Header styling */
         #header {
             position: absolute;
-            top: 80px; /* Same as #bestTime top */
-            right: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            z-index: 5;
-        }
-
-        /* Toggle Button Styling */
-        .toggle-button {
-            background-color: #ff6600;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .toggle-button:hover {
-            background-color: #e55b00;
-        }
-
-        /* Content Container as Flexbox with Sidebar Leaderboard */
-        #contentContainer {
-            position: absolute;
-            top: 120px; /* Adjusted to accommodate the best time and header */
+            top: 80px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 1200px;
-            height: 60vh;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+        }
+
+        /* Best time display styling */
+        #bestTime {
+            font-size: 1em;
+            color: #333;
+        }
+
+        /* Toggle switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff6600;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Toggle label styling */
+        .toggle-label {
+            font-size: 1em;
+            color: #ff6600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Content Container styling */
+        #contentContainer {
+            position: absolute;
+            top: 120px; /* Adjusted to accommodate the header */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            height: 60vh; /* Adjust as needed */
             background-color: #ffffff;
             border: 2px solid #000;
             border-radius: 10px;
             overflow: hidden;
             z-index: 3;
-            display: flex;
-        }
-
-        /* Game Container */
-        #gameContainer {
-            flex: 3;
-            position: relative;
-        }
-
-        /* Leaderboard Container as Sidebar */
-        #leaderboardContainer {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #fafafa;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-left: 2px solid #000;
-            border-radius: 0 10px 10px 0;
-            display: none;
-        }
-
-        /* Show Leaderboard Sidebar */
-        #leaderboardContainer.active {
-            display: block;
         }
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
             #contentContainer {
                 height: 70vh; /* Taller on smaller screens */
-                flex-direction: column;
             }
+        }
 
-            #leaderboardContainer {
-                width: 100%;
-                border-left: none;
-                border-top: 2px solid #000;
-                border-radius: 10px 10px 0 0;
+        @media (min-width: 601px) and (max-width: 1200px) {
+            #contentContainer {
+                height: 60vh; /* Default for medium screens */
             }
+        }
 
-            #leaderboardContainer.active {
-                display: block;
+        @media (min-width: 1201px) {
+            #contentContainer {
+                height: 50vh; /* Shorter for larger screens */
             }
+        }
 
-            /* Adjust game title for smaller screens */
-            #gameTitle {
-                font-size: 2em;
-            }
+        /* Game and Leaderboard container styling */
+        #gameContainer, #leaderboardContainer {
+            width: 100%;
+            height: 100%;
+            display: none; /* Hidden by default */
+            position: relative;
+        }
+
+        /* Initially show the game container */
+        #gameContainer.active, #leaderboardContainer.active {
+            display: block;
         }
 
         /* Start button styling */
@@ -185,84 +187,73 @@
             cursor: pointer;
         }
 
-        /* Leaderboard Header */
+        /* Enhanced Leaderboard container styling */
+        #leaderboardContainer {
+            padding: 20px;
+            overflow-y: auto; /* Add scroll if content overflows */
+            background-color: #fafafa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
         #leaderboardContainer h2 {
             text-align: center;
             color: #ff6600;
             margin-bottom: 20px;
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: bold;
         }
-
-        /* Leaderboard List Items */
         #leaderboardList {
             list-style: none; /* Remove default numbering */
             padding-left: 0;
             margin: 0;
         }
-
         #leaderboardList li {
             background-color: #fff;
-            margin-bottom: 15px;
-            padding: 20px;
+            margin-bottom: 10px;
+            padding: 15px 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: background-color 0.3s, transform 0.3s;
         }
-
         #leaderboardList li:hover {
-            background-color: #f9f9f9;
-            transform: translateY(-3px);
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
         }
-
-        /* Leaderboard Rank Styling */
         #leaderboardList li .rank {
             font-size: 1.2em;
             font-weight: bold;
             color: #ff6600;
-            width: 30px;
         }
-
-        /* Leaderboard Name Styling */
         #leaderboardList li .name {
             font-size: 1em;
             color: #333;
-            flex: 1;
-            padding-left: 10px;
         }
-
-        /* Leaderboard Time Styling */
         #leaderboardList li .time {
             font-size: 1em;
             color: #555;
-            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <!-- Game Title -->
-    <div id="gameTitle">Click the Dot FAST!</div>
-
-    <!-- Best Time Display -->
-    <div id="bestTime">BEST TIME: N/A</div>
-
-    <!-- Header with Leaderboard Toggle -->
     <div id="header">
-        <button id="toggleLeaderboardButton" class="toggle-button">Leaderboard</button>
+        <div id="bestTime">BEST TIME: N/A</div>
+        <div>
+            <label class="switch">
+                <input type="checkbox" id="toggleLeaderboard">
+                <span class="slider round"></span>
+            </label>
+            <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
+        </div>
     </div>
-
-    <!-- Content Container -->
     <div id="contentContainer">
-        <!-- Game Container -->
         <div id="gameContainer" class="active">
             <button id="startButton">Start</button>
             <div id="message"></div>
             <canvas id="gameCanvas"></canvas>
         </div>
-        <!-- Leaderboard Container -->
         <div id="leaderboardContainer">
             <h2>Leaderboard</h2>
             <ol id="leaderboardList">
@@ -280,13 +271,13 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
+            apiKey: "AIzaSyBbqBN4156KJNwTiEzPQqDfBFmdtkfL1Z8",
+            authDomain: "clickthedotfast-84528.firebaseapp.com",
+            projectId: "clickthedotfast-84528",
+            storageBucket: "clickthedotfast-84528.appspot.com",
+            messagingSenderId: "603486229797",
+            appId: "1:603486229797:web:c6e3092250cc9df0f3b6cc",
+            measurementId: "G-JVPWNZ4LB4"
         };
 
         // Initialize Firebase
@@ -305,8 +296,7 @@
         const messageDiv = document.getElementById('message');
         const bestTimeDiv = document.getElementById('bestTime');
         const leaderboardList = document.getElementById('leaderboardList');
-        const toggleLeaderboardButton = document.getElementById('toggleLeaderboardButton');
-        const gameTitle = document.getElementById('gameTitle');
+        const toggleLeaderboard = document.getElementById('toggleLeaderboard');
 
         // Set canvas size to match gameContainer
         function setCanvasSize() {
@@ -327,7 +317,6 @@
         let bestTime = null;
         let dotTimeout; // Timeout for dot appearance
         let particles = []; // Array to hold explosion particles
-        let isPromptActive = false; // Prevent multiple prompts
 
         // Initialize bestTime from localStorage if available
         if (localStorage.getItem('bestTime')) {
@@ -573,9 +562,7 @@
                 }
 
                 const distance = Math.hypot(clickX - dotX, clickY - dotY);
-                if (distance <= dotRadius && !isPromptActive) {
-                    isPromptActive = true; // Set the flag
-
+                if (distance <= dotRadius) {
                     // User clicked on the dot
                     const reactionTimeMs = performance.now() - dotAppearanceTime;
                     const reactionTimeSec = reactionTimeMs / 1000;
@@ -637,11 +624,6 @@
 
                     // Refresh the leaderboard
                     getTopScores();
-
-                    // Reset the flag after a short delay to allow new interactions
-                    setTimeout(() => {
-                        isPromptActive = false;
-                    }, 1000); // 1-second cooldown
                 }
             }
         }
@@ -667,14 +649,16 @@
             startCountdown(); // Begin countdown before game starts
         });
 
-        // Leaderboard Toggle Button event listener
-        toggleLeaderboardButton.addEventListener('click', () => {
-            if (leaderboardContainer.classList.contains('active')) {
-                // Hide leaderboard
-                leaderboardContainer.classList.remove('active');
-            } else {
-                // Show leaderboard
+        // Leaderboard Toggle event listener
+        toggleLeaderboard.addEventListener('change', () => {
+            if (toggleLeaderboard.checked) {
+                // Show leaderboard and hide game
+                gameContainer.classList.remove('active');
                 leaderboardContainer.classList.add('active');
+            } else {
+                // Show game and hide leaderboard
+                leaderboardContainer.classList.remove('active');
+                gameContainer.classList.add('active');
             }
         });
 
