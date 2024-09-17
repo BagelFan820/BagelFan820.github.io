@@ -73,6 +73,7 @@
             opacity: 0;
             width: 0;
             height: 0;
+            outline: none;
         }
 
         .leaderboard-toggle .slider {
@@ -106,18 +107,6 @@
         .leaderboard-toggle input:checked + .slider:before {
             transform: translateX(26px);
         }
-        /* Remove the flash/outline for the toggle switch */
-        .leaderboard-toggle .switch input:focus + .slider,
-        .leaderboard-toggle .slider:focus {
-            outline: none; /* Remove outline */
-            box-shadow: none; /* Remove any shadow effect */
-        }
-
-        /* Additionally, remove the outline from the input itself */
-        .leaderboard-toggle .switch input {
-            outline: none; /* Remove the default browser outline on the checkbox */
-        }
-
 
         /* Toggle Label Styling */
         .toggle-label {
