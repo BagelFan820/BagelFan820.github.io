@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,39 +16,23 @@
             position: relative;
         }
 
-        /* Content Container styling */
-        #contentContainer {
+        /* Header styling */
+        #header {
             position: absolute;
-            top: 120px; /* Adjusted to accommodate the header */
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 500px;
-            height: 60vh; /* Adjust as needed */
-            background-color: #ffffff;
-            border: 2px solid #000;
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 3;
-            
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px; /* Add padding for spacing */
-        }
-
-        /* Header styling within contentContainer */
-        #header {
-            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px; /* Space below the header */
+            z-index: 5;
         }
 
         /* Best time display styling */
         #bestTime {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #333;
         }
 
@@ -106,6 +91,41 @@
             user-select: none;
         }
 
+        /* Content Container styling */
+        #contentContainer {
+            position: absolute;
+            top: 120px; /* Adjusted to accommodate the header */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            height: 60vh; /* Adjust as needed */
+            background-color: #ffffff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 3;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            #contentContainer {
+                height: 70vh; /* Taller on smaller screens */
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 1200px) {
+            #contentContainer {
+                height: 60vh; /* Default for medium screens */
+            }
+        }
+
+        @media (min-width: 1201px) {
+            #contentContainer {
+                height: 50vh; /* Shorter for larger screens */
+            }
+        }
+
         /* Game and Leaderboard container styling */
         #gameContainer, #leaderboardContainer {
             width: 100%;
@@ -142,7 +162,7 @@
         /* Message display styling */
         #message {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3;
@@ -216,39 +236,20 @@
             font-size: 1em;
             color: #555;
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            #contentContainer {
-                height: 70vh; /* Taller on smaller screens */
-            }
-        }
-
-        @media (min-width: 601px) and (max-width: 1200px) {
-            #contentContainer {
-                height: 60vh; /* Default for medium screens */
-            }
-        }
-
-        @media (min-width: 1201px) {
-            #contentContainer {
-                height: 50vh; /* Shorter for larger screens */
-            }
-        }
     </style>
 </head>
 <body>
-    <div id="contentContainer">
-        <div id="header">
-            <div id="bestTime">BEST TIME: N/A</div>
-            <div>
-                <label class="switch">
-                    <input type="checkbox" id="toggleLeaderboard">
-                    <span class="slider round"></span>
-                </label>
-                <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
-            </div>
+    <div id="header">
+        <div id="bestTime">BEST TIME: N/A</div>
+        <div>
+            <label class="switch">
+                <input type="checkbox" id="toggleLeaderboard">
+                <span class="slider round"></span>
+            </label>
+            <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
         </div>
+    </div>
+    <div id="contentContainer">
         <div id="gameContainer" class="active">
             <button id="startButton">Start</button>
             <div id="message"></div>
