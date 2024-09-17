@@ -658,7 +658,7 @@
         }
 
         // Function to retrieve and display top scores
-        async function getTopScores(limitNumber = 50) {
+        async function getTopScores(limitNumber = 100) {
             try {
                 const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(limitNumber));
                 const querySnapshot = await getDocs(q);
@@ -811,20 +811,20 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
-                    // Fetch current top 50 scores to determine if this score qualifies
+                    // Fetch current top 100 scores to determine if this score qualifies
                     try {
-                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(50));
+                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(100));
                         const querySnapshot = await getDocs(q);
                         let qualifies = false;
 
                         if (querySnapshot.empty) {
                             // No scores yet, so it qualifies
                             qualifies = true;
-                        } else if (querySnapshot.size < 50) {
-                            // Less than 50 scores, it qualifies
+                        } else if (querySnapshot.size < 100) {
+                            // Less than 100 scores, it qualifies
                             qualifies = true;
                         } else {
-                            // Get the worst (50th) score
+                            // Get the worst (100th) score
                             const docs = querySnapshot.docs;
                             const worstScore = docs[docs.length - 1].data().time;
                             if (reactionTimeSec < worstScore) {
