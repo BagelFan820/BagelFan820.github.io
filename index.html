@@ -645,7 +645,7 @@
         }
 
         // Function to retrieve and display top scores
-        async function getTopScores(limitNumber = 10) {
+        async function getTopScores(limitNumber = 50) {
             try {
                 const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(limitNumber));
                 const querySnapshot = await getDocs(q);
@@ -798,7 +798,7 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
-                    // Fetch current top 10 scores to determine if this score qualifies
+                    // Fetch current top 50 scores to determine if this score qualifies
                     try {
                         const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(50));
                         const querySnapshot = await getDocs(q);
