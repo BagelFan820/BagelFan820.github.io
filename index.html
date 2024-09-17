@@ -800,18 +800,18 @@
 
                     // Fetch current top 10 scores to determine if this score qualifies
                     try {
-                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
+                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(50));
                         const querySnapshot = await getDocs(q);
                         let qualifies = false;
 
                         if (querySnapshot.empty) {
                             // No scores yet, so it qualifies
                             qualifies = true;
-                        } else if (querySnapshot.size < 10) {
-                            // Less than 10 scores, it qualifies
+                        } else if (querySnapshot.size < 50) {
+                            // Less than 50 scores, it qualifies
                             qualifies = true;
                         } else {
-                            // Get the worst (10th) score
+                            // Get the worst (50th) score
                             const docs = querySnapshot.docs;
                             const worstScore = docs[docs.length - 1].data().time;
                             if (reactionTimeSec < worstScore) {
