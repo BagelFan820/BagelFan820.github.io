@@ -5,329 +5,373 @@
     <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Reset and Basic Styling */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            position: relative;
-        }
+       /* Reset and Basic Styling */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    position: relative;
+}
 
-        /* Header Styling */
-        #header {
-            position: absolute;
-            top: 20px; /* Adjusted for visible title */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 5;
-        }
+/* Header Styling */
+#header {
+    position: absolute;
+    top: 20px; /* Adjusted for visible title */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column; /* Default to column for mobile */
+    align-items: center;
+    z-index: 5;
+    padding: 10px 0; /* Add some padding for spacing */
+}
 
-        /* Page Title Styling */
-        #pageTitle {
-            font-size: 1.5em;
-            color: #ff6600;
-            margin: 0;
-            text-align: center;
-            flex: 1;
-        }
+/* Page Title Styling */
+#pageTitle {
+    font-size: 1.8em; /* Slightly larger for prominence */
+    color: #ff6600;
+    margin: 0 0 10px 0; /* Margin below the title */
+    width: 100%; /* Span the full width */
+    text-align: center; /* Center the text */
+}
 
-        /* Best Time Display Styling */
-        #bestTime {
-            font-size: 1em;
-            color: #333;
-            margin-right: 10px;
-        }
+/* Best Time and Toggle Container */
+#header .header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
 
-        /* Toggle Switch Styling */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
+/* Best Time Display Styling */
+#bestTime {
+    font-size: 1em;
+    color: #333;
+}
 
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+/* Toggle Switch Styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
 
-        input:checked + .slider {
-            background-color: #ff6600;
-        }
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
 
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
+input:checked + .slider {
+    background-color: #ff6600;
+}
 
-        /* Toggle Label Styling */
-        .toggle-label {
-            font-size: 1em;
-            color: #ff6600;
-            cursor: pointer;
-            user-select: none;
-        }
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
 
-        /* Content Container Styling */
-        #contentContainer {
-            position: absolute;
-            top: 100px; /* Adjusted to accommodate the header and title */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            height: 60vh;
-            background-color: #ffffff;
-            border: 2px solid #000;
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 3;
-        }
+/* Toggle Label Styling */
+.toggle-label {
+    font-size: 1em;
+    color: #ff6600;
+    cursor: pointer;
+    user-select: none;
+}
 
-        /* Responsive Adjustments */
-        @media (max-width: 600px) {
-            #contentContainer {
-                height: 70vh;
-            }
-        }
+/* Responsive Adjustments for Larger Screens */
+@media (min-width: 601px) {
+    #header {
+        flex-direction: row; /* Switch to row for larger screens */
+        justify-content: space-between;
+    }
 
-        @media (min-width: 601px) and (max-width: 1200px) {
-            #contentContainer {
-                height: 60vh;
-            }
-        }
+    #pageTitle {
+        width: auto; /* Allow title to take natural width */
+        text-align: left; /* Align title to the left */
+        margin: 0; /* Remove bottom margin */
+    }
 
-        @media (min-width: 1201px) {
-            #contentContainer {
-                height: 50vh;
-            }
-        }
+    /* Ensure header-info aligns properly in row layout */
+    #header .header-info {
+        width: auto;
+    }
+}
 
-        /* Game and Leaderboard Container Styling */
-        #gameContainer, #leaderboardContainer {
-            width: 100%;
-            height: 100%;
-            display: none;
-            position: relative;
-        }
+/* Content Container Styling */
+#contentContainer {
+    position: absolute;
+    top: 160px; /* Adjusted to accommodate the header and title */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    height: 60vh;
+    background-color: #ffffff;
+    border: 2px solid #000;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+}
 
-        #gameContainer.active, #leaderboardContainer.active {
-            display: block;
-        }
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    #contentContainer {
+        height: 70vh;
+    }
+}
 
-        /* Start Button Styling */
-        #startButton {
-            position: absolute;
-            z-index: 4;
-            padding: 15px 30px;
-            font-size: 1.5em;
-            cursor: pointer;
-            background-color: #ff6600;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            transition: background-color 0.3s;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        #startButton:hover, #startButton:focus {
-            background-color: #e55b00;
-            outline: none;
-        }
+@media (min-width: 601px) and (max-width: 1200px) {
+    #contentContainer {
+        height: 60vh;
+    }
+}
 
-        /* Message Display Styling */
-        #message {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3;
-            font-size: 1.5em;
-            color: #ff6600;
-            text-align: center;
-            padding: 10px 20px;
-            word-wrap: break-word;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            display: none;
-            pointer-events: none;
-        }
+@media (min-width: 1201px) {
+    #contentContainer {
+        height: 50vh;
+    }
+}
 
-        /* Canvas Styling */
-        #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            cursor: pointer;
-        }
+/* Game and Leaderboard Container Styling */
+#gameContainer, #leaderboardContainer {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: relative;
+}
 
-        /* Leaderboard Container Styling */
-        #leaderboardContainer {
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #fafafa;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        #leaderboardContainer h2 {
-            text-align: center;
-            color: #ff6600;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-        #leaderboardList {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
-        #leaderboardList li {
-            background-color: #fff;
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        #leaderboardList li:hover {
-            background-color: #f0f0f0;
-            transform: translateY(-2px);
-        }
-        #leaderboardList li .rank {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #ff6600;
-        }
-        #leaderboardList li .name {
-            font-size: 1em;
-            color: #333;
-        }
-        #leaderboardList li .time {
-            font-size: 1em;
-            color: #555;
-        }
+#gameContainer.active, #leaderboardContainer.active {
+    display: block;
+}
 
-        /* Modal Styling */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 6;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-        }
+/* Start Button Styling */
+#startButton {
+    position: absolute;
+    z-index: 4;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
+    background-color: #ff6600;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    transition: background-color 0.3s, transform 0.2s;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; /* Increased width for better tap target */
+}
 
-        .modal-content {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 300px;
-            width: 80%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
+#startButton:hover, #startButton:focus {
+    background-color: #e55b00;
+    outline: none;
+    transform: translate(-50%, -50%) scale(1.05); /* Slight scale on hover/focus */
+}
 
-        .modal-content h2 {
-            color: #ff6600;
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
+/* Message Display Styling */
+#message {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    font-size: 1.5em;
+    color: #ff6600;
+    text-align: center;
+    padding: 10px 20px;
+    word-wrap: break-word;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    display: none;
+    pointer-events: none;
+}
 
-        .modal-content p {
-            margin-bottom: 15px;
-            color: #333;
-        }
+/* Canvas Styling */
+#gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+    touch-action: manipulation; /* Improves touch responsiveness */
+}
 
-        .modal-content input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            font-size: 1em;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+/* Leaderboard Container Styling */
+#leaderboardContainer {
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #fafafa;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
 
-        .modal-buttons {
-            display: flex;
-            justify-content: space-around;
-        }
+#leaderboardContainer h2 {
+    text-align: center;
+    color: #ff6600;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
 
-        .modal-buttons button {
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+#leaderboardList {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
 
-        #nameSubmitButton {
-            background-color: #ff6600;
-            color: #ffffff;
-        }
+#leaderboardList li {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
 
-        #nameSubmitButton:hover, #nameSubmitButton:focus {
-            background-color: #e55b00;
-            outline: none;
-        }
+#leaderboardList li:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
 
-        #nameCancelButton {
-            background-color: #cccccc;
-            color: #333333;
-        }
+#leaderboardList li .rank {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ff6600;
+}
 
-        #nameCancelButton:hover, #nameCancelButton:focus {
-            background-color: #999999;
-            outline: none;
-        }
+#leaderboardList li .name {
+    font-size: 1em;
+    color: #333;
+}
 
-        /* Prevent Background Scrolling When Modal is Active */
-        body.modal-open {
-            overflow: hidden;
-        }
+#leaderboardList li .time {
+    font-size: 1em;
+    color: #555;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 6;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Added padding for smaller screens */
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 300px;
+    width: 100%; /* Ensure full width on small screens */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content h2 {
+    color: #ff6600;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 45%; /* Equal width for both buttons */
+}
+
+#nameSubmitButton {
+    background-color: #ff6600;
+    color: #ffffff;
+}
+
+#nameSubmitButton:hover, #nameSubmitButton:focus {
+    background-color: #e55b00;
+    outline: none;
+    transform: scale(1.05);
+}
+
+#nameCancelButton {
+    background-color: #cccccc;
+    color: #333333;
+}
+
+#nameCancelButton:hover, #nameCancelButton:focus {
+    background-color: #999999;
+    outline: none;
+    transform: scale(1.05);
+}
+
+/* Prevent Background Scrolling When Modal is Active */
+body.modal-open {
+    overflow: hidden;
+}
     </style>
 </head>
 <body>
