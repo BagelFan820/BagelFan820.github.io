@@ -226,6 +226,7 @@
             background-color: #fafafa;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            box-sizing: border-box; /* Include padding and border in the width */
         }
 
         #leaderboardContainer h2 {
@@ -239,6 +240,7 @@
         #leaderboardList {
             list-style: none;
             padding-left: 0;
+            padding-right: 0;
             margin: 0;
             max-width: 100%;
         }
@@ -246,44 +248,45 @@
         #leaderboardList li {
             background-color: #fff;
             margin-bottom: 10px;
-            padding: 12px 16px;
+            padding: 12px 16px; /* Equal padding on all sides */
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
+            display: flex; /* Use Flexbox for alignment */
+            justify-content: space-between; /* Distribute space between elements */
             align-items: center;
             transition: background-color 0.3s, transform 0.3s;
-            max-width: 100%;
+            max-width: calc(100% - 32px); /* Ensure list items fit within the container with padding */
+            box-sizing: border-box; /* Include padding in the width calculation */
         }
 
+        /* Hover effect for list items */
         #leaderboardList li:hover {
             background-color: #f0f0f0;
             transform: translateY(-2px);
         }
 
         /* Rank, Name, and Time Styling */
-#leaderboardList li .rank {
-    font-size: 1em;
-    color: #ff6600; /* Original color for rank */
-    text-align: left; /* Align left */
-    flex: 0 0 auto; /* Fixed size element */
-    margin-right: auto; /* Push the name to the center */
-}
+        #leaderboardList li .rank {
+            font-size: 1em;
+            color: #ff6600; /* Original color for rank */
+            text-align: left; /* Align left */
+            flex: 0 0 auto; /* Fixed size element */
+        }
 
-#leaderboardList li .name {
-    font-size: 1em;
-    color: #333;
-    text-align: center; /* Center-align name */
-    flex: 1; /* Flex-grow to take up remaining space */
-}
+        #leaderboardList li .name {
+            font-size: 1em;
+            color: #333;
+            text-align: center; /* Center-align name */
+            flex: 1; /* Flex-grow to take up remaining space */
+        }
 
-#leaderboardList li .time {
-    font-size: 1em;
-    color: #333;
-    text-align: right; /* Align right */
-    flex: 0 0 auto; /* Fixed size element */
-    margin-left: auto; /* Push time to the right */
-}
+        #leaderboardList li .time {
+            font-size: 1em;
+            color: #333;
+            text-align: right; /* Align right */
+            flex: 0 0 auto; /* Fixed size element */
+        }
+
 
         /* Modal Styling */
         .modal {
