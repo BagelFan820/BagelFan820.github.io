@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Click the Dot FAST</title>
+    <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* Reset and basic styling */
@@ -187,58 +187,31 @@
             color: #333;
         }
     </style>
-    <!-- Firebase SDKs -->
+    <!-- Firebase and Game Script -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-      import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-    
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyBbqBN4156KJNwTiEzPQqDfBFmdtkfL1Z8",
-        authDomain: "clickthedotfast-84528.firebaseapp.com",
-        projectId: "clickthedotfast-84528",
-        storageBucket: "clickthedotfast-84528.appspot.com",
-        messagingSenderId: "603486229797",
-        appId: "1:603486229797:web:c6e3092250cc9df0f3b6cc",
-        measurementId: "G-JVPWNZ4LB4"
-      };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-    
-      // Initialize Firestore
-      const db = getFirestore(app);
-    </script>
-</head>
-<body>
-    <div id="header">
-        <div id="bestTime">BEST TIME: N/A</div>
-        <div>
-            <label class="switch">
-                <input type="checkbox" id="toggleLeaderboard">
-                <span class="slider round"></span>
-            </label>
-            <label for="toggleLeaderboard" class="toggle-label">Leaderboard</label>
-        </div>
-    </div>
-    <div id="contentContainer">
-        <div id="gameContainer" class="active">
-            <button id="startButton">Start</button>
-            <div id="message"></div>
-            <canvas id="gameCanvas"></canvas>
-        </div>
-        <div id="leaderboardContainer">
-            <h2>Leaderboard</h2>
-            <ol id="leaderboardList">
-                <!-- Scores will be dynamically inserted here -->
-            </ol>
-        </div>
-    </div>
+        // Import Firebase SDK functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbqBN4156KJNwTiEzPQqDfBFmdtkfL1Z8",
+            authDomain: "clickthedotfast-84528.firebaseapp.com",
+            projectId: "clickthedotfast-84528",
+            storageBucket: "clickthedotfast-84528.appspot.com",
+            messagingSenderId: "603486229797",
+            appId: "1:603486229797:web:c6e3092250cc9df0f3b6cc",
+            measurementId: "G-JVPWNZ4LB4"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Initialize Firestore
+        const db = getFirestore(app);
+
         // Get references to HTML elements
         const gameContainer = document.getElementById('gameContainer');
         const leaderboardContainer = document.getElementById('leaderboardContainer');
