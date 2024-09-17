@@ -816,20 +816,20 @@
                     // Create explosion animation
                     createExplosion(dotX, dotY);
 
-                    // Fetch current top 100 scores to determine if this score qualifies
+                    // Fetch current top 10 scores to determine if this score qualifies
                     try {
-                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(100));
+                        const q = query(collection(db, "leaderboard"), orderBy("time", "asc"), limit(10));
                         const querySnapshot = await getDocs(q);
                         let qualifies = false;
 
                         if (querySnapshot.empty) {
                             // No scores yet, so it qualifies
                             qualifies = true;
-                        } else if (querySnapshot.size < 100) {
-                            // Less than 100 scores, it qualifies
+                        } else if (querySnapshot.size < 10) {
+                            // Less than 10 scores, it qualifies
                             qualifies = true;
                         } else {
-                            // Get the worst (100th) score
+                            // Get the worst (10th) score
                             const docs = querySnapshot.docs;
                             const worstScore = docs[docs.length - 1].data().time;
                             if (reactionTimeSec < worstScore) {
