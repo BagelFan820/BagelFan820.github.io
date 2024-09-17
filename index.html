@@ -220,12 +220,16 @@
         /* Leaderboard Container Styling */
         #leaderboardContainer {
             padding: 20px;
-            overflow-y: auto;
             background-color: #fafafa;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            max-height: 100%; /* Ensure it fits within the content container */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Enable scrolling if content exceeds container */
         }
 
+        /* Leaderboard Header */
         #leaderboardContainer h2 {
             text-align: center;
             color: #ff6600;
@@ -234,43 +238,75 @@
             font-weight: bold;
         }
 
+        /* Leaderboard List */
         #leaderboardList {
             list-style: none;
             padding-left: 0;
             margin: 0;
+            flex-grow: 1; /* Allow the list to take available space */
         }
 
+        /* Leaderboard List Items */
         #leaderboardList li {
             background-color: #fff;
             margin-bottom: 10px;
-            padding: 12px 16px;
+            padding: 12px 16px; /* Reduced padding for better fit */
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: background-color 0.3s, transform 0.3s;
+            font-size: 1em; /* Base font size */
         }
 
+        /* Hover Effect */
         #leaderboardList li:hover {
             background-color: #f0f0f0;
             transform: translateY(-2px);
         }
 
+        /* Leaderboard Entry Elements */
         #leaderboardList li .rank {
             font-size: 1.2em;
             font-weight: bold;
             color: #ff6600;
+            flex: 0 0 30px; /* Fixed width for rank */
         }
 
         #leaderboardList li .name {
-            font-size: 1em;
+            flex: 1; /* Take remaining space */
             color: #333;
+            padding: 0 10px;
+            text-align: left;
+            word-break: break-word; /* Prevent long names from breaking layout */
         }
 
         #leaderboardList li .time {
-            font-size: 1em;
+            flex: 0 0 80px; /* Fixed width for time */
             color: #555;
+            text-align: right;
+        }
+
+        /* Responsive Font Sizes */
+        @media (max-width: 600px) {
+            #leaderboardContainer h2 {
+                font-size: 1.5em;
+            }
+            
+            #leaderboardList li {
+                padding: 10px 14px;
+                font-size: 0.9em;
+            }
+            
+            #leaderboardList li .rank {
+                font-size: 1em;
+                flex: 0 0 25px;
+            }
+            
+            #leaderboardList li .time {
+                flex: 0 0 70px;
+                font-size: 0.9em;
         }
 
         /* Modal Styling */
