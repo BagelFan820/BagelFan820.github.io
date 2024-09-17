@@ -261,20 +261,14 @@
             transform: translateY(-2px);
         }
 
-        #leaderboardList li .rank {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #ff6600;
-        }
-
-        #leaderboardList li .name {
-            font-size: 1em;
-            color: #333;
-        }
-
+        /* Rank, Name, and Time Styling */
+        #leaderboardList li .rank,
+        #leaderboardList li .name,
         #leaderboardList li .time {
-            font-size: 1em;
-            color: #555;
+        font-size: 1em;
+        color: #333;
+        flex: 1; /* Distribute space equally among elements */
+        text-align: center; /* Center-align content */
         }
 
         /* Modal Styling */
