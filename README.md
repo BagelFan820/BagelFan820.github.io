@@ -235,6 +235,75 @@
             font-size: 1em;
             color: #555;
         }
+
+        /* Modal styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 6; /* Above all other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .modal-content h2 {
+            color: #ff6600;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .modal-content input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .modal-buttons button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #nameSubmitButton {
+            background-color: #ff6600;
+            color: #ffffff;
+        }
+
+        #nameSubmitButton:hover {
+            background-color: #e55b00;
+        }
+
+        #nameCancelButton {
+            background-color: #cccccc;
+            color: #333333;
+        }
+
+        #nameCancelButton:hover {
+            background-color: #999999;
+        }
     </style>
 </head>
 <body>
@@ -259,6 +328,18 @@
             <ol id="leaderboardList">
                 <!-- Scores will be dynamically inserted here -->
             </ol>
+        </div>
+    </div>
+
+    <!-- Modal for Name Input -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="playerNameInput" placeholder="Your Name" maxlength="20">
+            <div class="modal-buttons">
+                <button id="nameSubmitButton">Submit</button>
+                <button id="nameCancelButton">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -297,6 +378,10 @@
         const bestTimeDiv = document.getElementById('bestTime');
         const leaderboardList = document.getElementById('leaderboardList');
         const toggleLeaderboard = document.getElementById('toggleLeaderboard');
+        const nameModal = document.getElementById('nameModal');
+        const playerNameInput = document.getElementById('playerNameInput');
+        const nameSubmitButton = document.getElementById('nameSubmitButton');
+        const nameCancelButton = document.getElementById('nameCancelButton');
 
         // Set canvas size to match gameContainer
         function setCanvasSize() {
@@ -594,16 +679,8 @@
                         }
 
                         if (qualifies) {
-                            // Prompt for player's name
-                            let playerName = prompt("Congratulations! Enter your name for the leaderboard:", "Player");
-                            if (playerName === null || playerName.trim() === "") {
-                                playerName = "Anonymous";
-                            } else {
-                                playerName = sanitizeInput(playerName.trim());
-                            }
-
-                            // Save the score to Firestore
-                            await saveScore(playerName, reactionTimeSec);
+                            // Show custom modal for player name input
+                            showNameModal(reactionTimeSec);
                         }
                     } catch (error) {
                         console.error("Error during qualification check or saving score:", error);
@@ -626,6 +703,25 @@
                     getTopScores();
                 }
             }
+        }
+
+        // Function to show the custom modal for player name input
+        function showNameModal(reactionTimeSec) {
+            nameModal.style.display = 'flex'; // Show the modal
+            playerNameInput.value = ''; // Clear previous input
+
+            // Handle the submit button click
+            nameSubmitButton.onclick = async function() {
+                const playerName = sanitizeInput(playerNameInput.value.trim()) || "Anonymous";
+                await saveScore(playerName, reactionTimeSec);
+                nameModal.style.display = 'none'; // Hide the modal after submitting
+                getTopScores(); // Refresh leaderboard
+            };
+
+            // Handle the cancel button click
+            nameCancelButton.onclick = function() {
+                nameModal.style.display = 'none'; // Hide the modal if canceled
+            };
         }
 
         // Function to sanitize player input
