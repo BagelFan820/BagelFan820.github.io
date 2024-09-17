@@ -162,7 +162,7 @@
         /* Message display styling */
         #message {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3;
@@ -529,10 +529,10 @@
             });
         }
 
-        // Handle click and touch events
+        // Handle click and touch events using pointerdown
         async function handleInteraction(e) {
             // Prevent default behavior for touch events to avoid unwanted side effects
-            if (e.type === 'touchstart') {
+            if (e.pointerType === 'touch') {
                 e.preventDefault();
             }
 
@@ -554,9 +554,9 @@
                 const rect = canvas.getBoundingClientRect();
                 let clickX, clickY;
 
-                if (e.touches && e.touches.length > 0) {
-                    clickX = e.touches[0].clientX - rect.left;
-                    clickY = e.touches[0].clientY - rect.top;
+                if (e.pointerType === 'touch') {
+                    clickX = e.clientX - rect.left;
+                    clickY = e.clientY - rect.top;
                 } else {
                     clickX = e.clientX - rect.left;
                     clickY = e.clientY - rect.top;
@@ -636,9 +636,8 @@
             return div.innerHTML;
         }
 
-        // Event listeners for clicks and touches
-        document.addEventListener('click', handleInteraction);
-        document.addEventListener('touchstart', handleInteraction);
+        // Event listeners for pointerdown
+        document.addEventListener('pointerdown', handleInteraction);
 
         // Start button event listener
         startButton.addEventListener('click', () => {
