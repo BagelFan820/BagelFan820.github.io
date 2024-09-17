@@ -1,11 +1,11 @@
-<DOCTYPE!html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Click the Dot FAST!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Reset and basic styling */
+        /* Reset and Basic Styling */
         html, body {
             height: 100%;
             margin: 0;
@@ -16,33 +16,42 @@
             position: relative;
         }
 
-        /* Header styling */
+        /* Header Styling */
         #header {
             position: absolute;
-            top: 80px;
+            top: 20px; /* Adjusted for visible title */
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 500px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             z-index: 5;
         }
 
-        /* Best time display styling */
+        /* Page Title Styling */
+        #pageTitle {
+            font-size: 1.5em;
+            color: #ff6600;
+            margin: 0;
+            text-align: center;
+            flex: 1;
+        }
+
+        /* Best Time Display Styling */
         #bestTime {
             font-size: 1em;
             color: #333;
+            margin-right: 10px;
         }
 
-        /* Toggle switch styling */
+        /* Toggle Switch Styling */
         .switch {
             position: relative;
             display: inline-block;
             width: 60px;
             height: 34px;
-            margin-right: 10px;
         }
 
         .switch input { 
@@ -83,7 +92,7 @@
             transform: translateX(26px);
         }
 
-        /* Toggle label styling */
+        /* Toggle Label Styling */
         .toggle-label {
             font-size: 1em;
             color: #ff6600;
@@ -91,15 +100,15 @@
             user-select: none;
         }
 
-        /* Content Container styling */
+        /* Content Container Styling */
         #contentContainer {
             position: absolute;
-            top: 120px; /* Adjusted to accommodate the header */
+            top: 100px; /* Adjusted to accommodate the header and title */
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 500px;
-            height: 60vh; /* Adjust as needed */
+            height: 60vh;
             background-color: #ffffff;
             border: 2px solid #000;
             border-radius: 10px;
@@ -107,42 +116,41 @@
             z-index: 3;
         }
 
-        /* Responsive adjustments */
+        /* Responsive Adjustments */
         @media (max-width: 600px) {
             #contentContainer {
-                height: 70vh; /* Taller on smaller screens */
+                height: 70vh;
             }
         }
 
         @media (min-width: 601px) and (max-width: 1200px) {
             #contentContainer {
-                height: 60vh; /* Default for medium screens */
+                height: 60vh;
             }
         }
 
         @media (min-width: 1201px) {
             #contentContainer {
-                height: 50vh; /* Shorter for larger screens */
+                height: 50vh;
             }
         }
 
-        /* Game and Leaderboard container styling */
+        /* Game and Leaderboard Container Styling */
         #gameContainer, #leaderboardContainer {
             width: 100%;
             height: 100%;
-            display: none; /* Hidden by default */
+            display: none;
             position: relative;
         }
 
-        /* Initially show the game container */
         #gameContainer.active, #leaderboardContainer.active {
             display: block;
         }
 
-        /* Start button styling */
+        /* Start Button Styling */
         #startButton {
             position: absolute;
-            z-index: 4; /* Higher z-index to be above the message */
+            z-index: 4;
             padding: 15px 30px;
             font-size: 1.5em;
             cursor: pointer;
@@ -155,11 +163,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        #startButton:hover {
+        #startButton:hover, #startButton:focus {
             background-color: #e55b00;
+            outline: none;
         }
 
-        /* Message display styling */
+        /* Message Display Styling */
         #message {
             position: absolute;
             top: 30%;
@@ -173,11 +182,11 @@
             word-wrap: break-word;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            display: none; /* Hidden by default */
-            pointer-events: none; /* Allow clicks to pass through */
+            display: none;
+            pointer-events: none;
         }
 
-        /* Canvas styling */
+        /* Canvas Styling */
         #gameCanvas {
             position: absolute;
             top: 0;
@@ -188,10 +197,10 @@
             cursor: pointer;
         }
 
-        /* Enhanced Leaderboard container styling */
+        /* Leaderboard Container Styling */
         #leaderboardContainer {
             padding: 20px;
-            overflow-y: auto; /* Add scroll if content overflows */
+            overflow-y: auto;
             background-color: #fafafa;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -204,7 +213,7 @@
             font-weight: bold;
         }
         #leaderboardList {
-            list-style: none; /* Remove default numbering */
+            list-style: none;
             padding-left: 0;
             margin: 0;
         }
@@ -237,16 +246,17 @@
             color: #555;
         }
 
-        /* Modal styling */
+        /* Modal Styling */
         .modal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
-            z-index: 6; /* Above all other elements */
+            z-index: 6;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
             align-items: center;
             justify-content: center;
         }
@@ -300,8 +310,9 @@
             color: #ffffff;
         }
 
-        #nameSubmitButton:hover {
+        #nameSubmitButton:hover, #nameSubmitButton:focus {
             background-color: #e55b00;
+            outline: none;
         }
 
         #nameCancelButton {
@@ -309,11 +320,12 @@
             color: #333333;
         }
 
-        #nameCancelButton:hover {
+        #nameCancelButton:hover, #nameCancelButton:focus {
             background-color: #999999;
+            outline: none;
         }
 
-        /* Prevent background scrolling when modal is active */
+        /* Prevent Background Scrolling When Modal is Active */
         body.modal-open {
             overflow: hidden;
         }
@@ -321,6 +333,7 @@
 </head>
 <body>
     <div id="header">
+        <h1 id="pageTitle">Click the Dot FAST!</h1>
         <div id="bestTime">BEST TIME: N/A</div>
         <div>
             <label class="switch">
@@ -345,14 +358,14 @@
     </div>
 
     <!-- Modal for Name Input -->
-    <div id="nameModal" class="modal">
+    <div id="nameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
-            <h2>Congratulations!</h2>
+            <h2 id="modalTitle">Congratulations!</h2>
             <p>You made it to the leaderboard.</p>
-            <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
+            <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" aria-label="Player Name">
             <div class="modal-buttons">
-                <button id="nameSubmitButton">Submit</button>
-                <button id="nameCancelButton">Cancel</button>
+                <button id="nameSubmitButton" aria-label="Submit your name">Submit</button>
+                <button id="nameCancelButton" aria-label="Cancel name submission">Cancel</button>
             </div>
         </div>
     </div>
@@ -438,7 +451,9 @@
 
             // Draw explosion particles if any
             if (particles.length > 0) {
-                particles.forEach((particle, index) => {
+                // Iterate in reverse to safely remove particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const particle = particles[i];
                     ctx.fillStyle = `rgba(${particle.color.r}, ${particle.color.g}, ${particle.color.b}, ${particle.alpha})`;
                     ctx.beginPath();
                     ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -454,9 +469,9 @@
 
                     // Remove particle if alpha or size is too low
                     if (particle.alpha <= 0 || particle.size <= 0.5) {
-                        particles.splice(index, 1);
+                        particles.splice(i, 1);
                     }
-                });
+                }
             }
 
             requestAnimationFrame(draw);
@@ -566,6 +581,17 @@
             return { r, g, b };
         }
 
+        // Function to display error messages
+        function displayError(message) {
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.9)';
+            messageDiv.style.color = '#ffffff';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
         // Function to save a score to Firestore
         async function saveScore(playerName, reactionTime) {
             try {
@@ -577,6 +603,7 @@
                 console.log("Score saved successfully!");
             } catch (e) {
                 console.error("Error saving score: ", e);
+                displayError("Failed to save score. Please try again.");
             }
         }
 
@@ -592,6 +619,7 @@
                 displayLeaderboard(scores);
             } catch (e) {
                 console.error("Error fetching scores: ", e);
+                displayError("Failed to load leaderboard.");
             }
         }
 
@@ -679,6 +707,14 @@
             return div.innerHTML;
         }
 
+        // Function to close modal with Esc key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && nameModal.style.display === 'flex') {
+                nameModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }
+        });
+
         // Handle click and touch events using pointerdown
         async function handleInteraction(e) {
             // Check if modal is open
@@ -709,13 +745,8 @@
                 const rect = canvas.getBoundingClientRect();
                 let clickX, clickY;
 
-                if (e.pointerType === 'touch') {
-                    clickX = e.clientX - rect.left;
-                    clickY = e.clientY - rect.top;
-                } else {
-                    clickX = e.clientX - rect.left;
-                    clickY = e.clientY - rect.top;
-                }
+                clickX = e.clientX - rect.left;
+                clickY = e.clientY - rect.top;
 
                 const distance = Math.hypot(clickX - dotX, clickY - dotY);
                 if (distance <= dotRadius) {
@@ -740,10 +771,8 @@
                             qualifies = true;
                         } else {
                             // Get the worst (10th) score
-                            let worstScore = 0;
-                            querySnapshot.forEach((doc) => {
-                                worstScore = doc.data().time;
-                            });
+                            const docs = querySnapshot.docs;
+                            const worstScore = docs[docs.length - 1].data().time;
                             if (reactionTimeSec < worstScore) {
                                 qualifies = true;
                             }
@@ -755,6 +784,7 @@
                         }
                     } catch (error) {
                         console.error("Error during qualification check or saving score:", error);
+                        displayError("An error occurred. Please try again.");
                     }
 
                     // Show the reaction time message
